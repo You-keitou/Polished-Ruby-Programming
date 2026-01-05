@@ -13,7 +13,7 @@ class QuizDataExtractor
   def extract(file_path)
     content = File.read(file_path)
     
-    if content =~ /puts\s+\"\\n=== (.+?) ===\\n\"/
+    if content =~ /puts\s+"\\n=== (.+?) ===\\n"/
       @title = $1
     else
       @title = File.basename(file_path, ".rb").capitalize
@@ -23,10 +23,10 @@ class QuizDataExtractor
       array_content = $1
       array_content.scan(/\{.*?\}/m).each do |hash_str|
         question = {}
-        hash_str.scan(/(\w+):\s*(?:"(.*?)"|'(.*?)'|([^,}\n]+))/m).each do |match|
+        hash_str.scan(/(\w+):\s*(?:"(.*?)"|'(.*?)'|([^,}\\n]+))/m).each do |match|
           key = match[0].to_sym
           value = match[1] || match[2] || match[3]
-          value = value.gsub('\"', '"').gsub("\'", "'") if value
+          value = value.gsub('"', '"').gsub("'", "'") if value
           question[key] = value.to_s.strip
         end
         @questions << question unless question.empty?
