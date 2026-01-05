@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第1章 1.6 クイズ: The Power of Struct & Data</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
+    <style>
+        .question-card {
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+        .options {
+            list-style: none;
+            padding: 0;
+        }
+        .options li {
+            margin: 10px 0;
+        }
+        .answer-section {
+            display: none;
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #f0f8ff;
+            border-radius: 5px;
+        }
+        .toggle-btn {
+            margin-top: 10px;
+        }
+        pre {
+            background-color: #f4f4f4;
+            padding: 10px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="../index.html">← Back to Index</a>
+        <h1>第1章 1.6 クイズ: The Power of Struct & Data</h1>
+    </header>
+
+    <main>
+        
+        <div class="question-card">
+            <h3>Q1. ケース1: Struct の継承パターン</h3>
+            
+            
+            
+            
+            <pre><code>class User < Struct.new(:id, :name); end</code></pre>
+            
+
+            <p>この定義方法は『Polished Ruby Programming』において、なぜ避けるべきとされている？</p>
+
+            <ul class="options">
+                <li><strong>A:</strong> 実行速度が極端に遅くなるから</li>
+                <li><strong>B:</strong> 無名クラスが継承階層に入り、予期しない動作や継承の複雑さを生むから</li>
+                
+                <li><strong>C:</strong> Ruby 3.0以降で非推奨になったから</li>
+                
+            </ul>
+
+            <button class="toggle-btn" onclick="document.getElementById('ans-0').style.display = 'block'">答えを見る</button>
+
+            <div id="ans-0" class="answer-section">
+                <p><strong>正解: B</strong></p>
+                <hr>
+                <p>正解は B です。<br><br>`class User < Struct.new(...)` と書くと、`User` と `Struct` の間に「名前のない中間クラス」が挟まってしまいます。<br>著者は `User = Struct.new(...)` と定義するか、あるいは Struct.new にブロックを渡してメソッドを定義することを推奨しています。</p>
+            </div>
+        </div>
+        
+        <div class="question-card">
+            <h3>Q2. ケース2: メモリ効率 (Memory footprint)</h3>
+            
+            
+            <p><strong>要件:</strong><br>100万個の「座標データ (x, y)」をメモリに保持したい。</p>
+            
+            
+            
+
+            <p>「通常のクラス」「Hash」「Struct」の中で、一般的に最もメモリ消費が少ないのは？</p>
+
+            <ul class="options">
+                <li><strong>A:</strong> Hash</li>
+                <li><strong>B:</strong> 通常のクラス (attr_accessor 使用)</li>
+                
+                <li><strong>C:</strong> Struct</li>
+                
+            </ul>
+
+            <button class="toggle-btn" onclick="document.getElementById('ans-1').style.display = 'block'">答えを見る</button>
+
+            <div id="ans-1" class="answer-section">
+                <p><strong>正解: C</strong></p>
+                <hr>
+                <p>正解は C です。<br><br>`Struct` はインスタンス変数をハッシュ形式で保持せず、内部的に最適化されたスロットに格納するため、通常のクラスやHashよりもメモリ効率が良い傾向にあります。<br>大量の小さなオブジェクトを作る場合は、Struct が非常に有利です。</p>
+            </div>
+        </div>
+        
+        <div class="question-card">
+            <h3>Q3. ケース3: Ruby 3.2 の新機能 'Data'</h3>
+            
+            
+            <p><strong>要件:</strong><br>値が変更されないことを保証したい「不変なデータ構造 (Value Object)」を定義したい。</p>
+            
+            
+            
+
+            <p>Struct に代わる Ruby 3.2 以降の推奨クラスは？</p>
+
+            <ul class="options">
+                <li><strong>A:</strong> ImmutableStruct</li>
+                <li><strong>B:</strong> Data</li>
+                
+                <li><strong>C:</strong> Record</li>
+                
+            </ul>
+
+            <button class="toggle-btn" onclick="document.getElementById('ans-2').style.display = 'block'">答えを見る</button>
+
+            <div id="ans-2" class="answer-section">
+                <p><strong>正解: B</strong></p>
+                <hr>
+                <p>正解は B です。<br><br>`Data.define(:id, :name)` は `Struct` に似ていますが、生成されたオブジェクトは不変 (Immutable) です。<br>`Struct` のようにあとから値を書き換えることができないため、バグを防ぎやすく、現代的な設計に適しています。</p>
+            </div>
+        </div>
+        
+        <div class="question-card">
+            <h3>Q4. ケース4: キーワード引数への対応</h3>
+            
+            
+            
+            
+            <pre><code>Point = Struct.new(:x, :y, keyword_init: true)\np = Point.new(x: 10, y: 20)</code></pre>
+            
+
+            <p>この `keyword_init: true` を使う最大のメリットは？</p>
+
+            <ul class="options">
+                <li><strong>A:</strong> 引数の順番を覚えなくて済むため、可読性と安全性が向上する</li>
+                <li><strong>B:</strong> 内部的な処理が Hash になるため高速化する</li>
+                
+                <li><strong>C:</strong> JSONへの変換が自動化される</li>
+                
+            </ul>
+
+            <button class="toggle-btn" onclick="document.getElementById('ans-3').style.display = 'block'">答えを見る</button>
+
+            <div id="ans-3" class="answer-section">
+                <p><strong>正解: A</strong></p>
+                <hr>
+                <p>正解は A です。<br><br>属性が多いデータ構造では、位置引数 (`10, 20, 30...`) だと順番を間違えるリスクがあります。<br>`keyword_init: true` を使うことで、シニアエンジニアが好む「自己記述的で安全なコード」になります。</p>
+            </div>
+        </div>
+        
+    </main>
+
+    <footer>
+        <p>Generated by Gemini CLI for Polished Ruby Programming</p>
+    </footer>
+</body>
+</html>

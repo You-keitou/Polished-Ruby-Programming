@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第1章 1.4 クイズ: Advanced Symbols & Strings</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
+    <style>
+        .question-card {
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+        .options {
+            list-style: none;
+            padding: 0;
+        }
+        .options li {
+            margin: 10px 0;
+        }
+        .answer-section {
+            display: none;
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #f0f8ff;
+            border-radius: 5px;
+        }
+        .toggle-btn {
+            margin-top: 10px;
+        }
+        pre {
+            background-color: #f4f4f4;
+            padding: 10px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="../index.html">← Back to Index</a>
+        <h1>第1章 1.4 クイズ: Advanced Symbols & Strings</h1>
+    </header>
+
+    <main>
+        
+        <div class="question-card">
+            <h3>Q1. ケース1: 外部入力とシンボル化 (Symbol DoS)</h3>
+            
+            
+            <p><strong>要件:</strong><br>Web APIのエンドポイントで、JSONのキーをシンボルに変換して扱いたい。<br>`JSON.parse(payload, symbolize_names: true)` を使用している。</p>
+            
+            
+            
+
+            <p>このコードがセキュリティレビューで『修正必須（Critical）』と判断される理由は？</p>
+
+            <ul class="options">
+                <li><strong>A:</strong> シンボルの生成は文字列より遅いため、レイテンシが悪化する</li>
+                <li><strong>B:</strong> 攻撃者がランダムなキーを持つJSONを大量に送信することで、メモリを枯渇させられる (DoS)</li>
+                
+                <li><strong>C:</strong> Ruby 3.0以降ではシンボルは即座にGCされるため、実は問題ない</li>
+                
+            </ul>
+
+            <button class="toggle-btn" onclick="document.getElementById('ans-0').style.display = 'block'">答えを見る</button>
+
+            <div id="ans-0" class="answer-section">
+                <p><strong>正解: B</strong></p>
+                <hr>
+                <p>正解は B です。<br><br>Ruby 2.2以降、動的に生成された一部のシンボルはGCされますが、それでも文字列に比べてコストが高く、回収のタイミングも異なります。<br>外部からの任意の入力を無制限にシンボル化することは、依然として **Symbol DoS** 脆弱性につながります。<br>Railsの `params` が `HashWithIndifferentAccess` を使い、内部で文字列としてキーを保持するのはこのためです。</p>
+            </div>
+        </div>
+        
+        <div class="question-card">
+            <h3>Q2. ケース2: フリーズされた文字列 (Frozen String Literal)</h3>
+            
+            
+            <p><strong>要件:</strong><br>ファイルの先頭に `# frozen_string_literal: true` を書いた。</p>
+            
+            
+            
+            <pre><code>a = \</code></pre>
+            
+
+            <p>このコードの出力は？</p>
+
+            <ul class="options">
+                <li><strong>A:</strong> true (同じオブジェクトID)</li>
+                <li><strong>B:</strong> false (異なるオブジェクトID)</li>
+                
+            </ul>
+
+            <button class="toggle-btn" onclick="document.getElementById('ans-1').style.display = 'block'">答えを見る</button>
+
+            <div id="ans-1" class="answer-section">
+                <p><strong>正解: A</strong></p>
+                <hr>
+                <p>正解は A です。<br><br>`frozen_string_literal: true` が有効な環境では、ソースコード中の文字列リテラルは自動的に freeze され、同じ内容のリテラルは **同一のオブジェクトインスタンス** を共有します（Intern化）。<br>これにより、メモリ使用量が劇的に削減されます。</p>
+            </div>
+        </div>
+        
+        <div class="question-card">
+            <h3>Q3. ケース3: 文字列の重複排除 (String Deduplication)</h3>
+            
+            
+            <p><strong>要件:</strong><br>CSVファイルから大量のデータを読み込む。'status' カラムには 'active', 'inactive' などの値が入るが、これらはリテラルではなくファイルから読み込んだ動的な文字列である。</p>
+            
+            
+            
+            <pre><code>status1 = csv_row['status'] # 'active' (from file)\nstatus2 = csv_row_next['status'] # 'active' (from file)</code></pre>
+            
+
+            <p>これらをシンボル化せずに、かつメモリ効率よく（同じオブジェクトとして）扱いたい。Ruby 2.5以降で使えるテクニックは？</p>
+
+            <ul class="options">
+                <li><strong>A:</strong> status1.freeze</li>
+                <li><strong>B:</strong> -status1 (単項マイナス演算子)</li>
+                
+                <li><strong>C:</strong> status1.dedup</li>
+                
+            </ul>
+
+            <button class="toggle-btn" onclick="document.getElementById('ans-2').style.display = 'block'">答えを見る</button>
+
+            <div id="ans-2" class="answer-section">
+                <p><strong>正解: B</strong></p>
+                <hr>
+                <p>正解は B です。<br><br>Ruby 2.5で導入された `String#-@` (単項マイナス) は、文字列の内容が既にインタプリタ内部のプールに存在すればそのオブジェクトを返し、なければ freeze して登録します。<br>これを **String Deduplication** と呼びます。<br>`freeze` は単にオブジェクトを変更不可にするだけで、重複排除（メモリ共有）までは保証しません（VMの実装依存ですが、明示的な `-@` が確実です）。</p>
+            </div>
+        </div>
+        
+        <div class="question-card">
+            <h3>Q4. ケース4: ハッシュのキー検索速度</h3>
+            
+            
+            <p><strong>要件:</strong><br>巨大なハッシュ（100万エントリ）がある。キーはすべて短い文字列（5文字程度）。</p>
+            
+            
+            
+
+            <p>検索速度 `hash['key']` (Stringキー) と `hash[:key]` (Symbolキー) の比較として正しいのは？</p>
+
+            <ul class="options">
+                <li><strong>A:</strong> Symbolキーの方が圧倒的に速い（整数比較のため）</li>
+                <li><strong>B:</strong> Stringキーの方が速い</li>
+                
+                <li><strong>C:</strong> 最近のRuby (2.2+) では、短い文字列であれば有意な差はない</li>
+                
+            </ul>
+
+            <button class="toggle-btn" onclick="document.getElementById('ans-3').style.display = 'block'">答えを見る</button>
+
+            <div id="ans-3" class="answer-section">
+                <p><strong>正解: C</strong></p>
+                <hr>
+                <p>正解は C です（Aを選んだ人も部分点）。<br><br>伝統的には「シンボルは整数ID比較だから速い」と言われてきましたが、近年のRubyでは文字列ハッシュの最適化（MurmurHashなど）が進んでおり、特に短い文字列ではベンチマーク上の差は無視できるレベルに縮まっています。<br>したがって、「速度のためだけに」無理してシンボルを使う必要性は薄れています（メモリ効率の観点の方が重要です）。</p>
+            </div>
+        </div>
+        
+    </main>
+
+    <footer>
+        <p>Generated by Gemini CLI for Polished Ruby Programming</p>
+    </footer>
+</body>
+</html>

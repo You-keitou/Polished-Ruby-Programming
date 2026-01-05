@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第1章 1.1 クイズ: Core vs Custom</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
+    <style>
+        .question-card {
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+        .options {
+            list-style: none;
+            padding: 0;
+        }
+        .options li {
+            margin: 10px 0;
+        }
+        .answer-section {
+            display: none;
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #f0f8ff;
+            border-radius: 5px;
+        }
+        .toggle-btn {
+            margin-top: 10px;
+        }
+        pre {
+            background-color: #f4f4f4;
+            padding: 10px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="../index.html">← Back to Index</a>
+        <h1>第1章 1.1 クイズ: Core vs Custom</h1>
+    </header>
+
+    <main>
+        
+        <div class="question-card">
+            <h3>Q1. ケース1: HTTPリクエストの環境変数 (例: Rack)</h3>
+            
+            
+            <p><strong>要件:</strong><br>Webサーバーから受け取ったリクエスト情報（ヘッダー、パス、メソッドなど）を、アプリケーションの各ミドルウェアに渡す必要があります。このデータは単なる情報の「入れ物」であり、特定の振る舞い（メソッド）は持ちません。また、ミドルウェアが自由に値を書き換えることが許容されます。</p>
+            
+            
+            
+
+            <p></p>
+
+            <ul class="options">
+                <li><strong>A:</strong> 組み込みクラス (Hash)</li>
+                <li><strong>B:</strong> 独自クラス (RequestEnv)</li>
+                
+            </ul>
+
+            <button class="toggle-btn" onclick="document.getElementById('ans-0').style.display = 'block'">答えを見る</button>
+
+            <div id="ans-0" class="answer-section">
+                <p><strong>正解: A</strong></p>
+                <hr>
+                <p>正解は A (Hash) です。\n\nRubyのWebサーバーインターフェースである 'Rack' では、環境変数を単なる `Hash` として扱います。\nデータが「単なる入れ物」であり、特定のドメインロジックを持たず、柔軟性が求められる場合（キーが動的に増えるなど）は、Hashが適しています。\nただし、Railsの `ActionDispatch::Request` のように、便利なメソッドを提供したい段階になると、このHashをラップした独自クラスが登場します。</p>
+            </div>
+        </div>
+        
+        <div class="question-card">
+            <h3>Q2. ケース2: 金額の計算 (例: Money gem)</h3>
+            
+            
+            <p><strong>要件:</strong><br>ECサイトで商品の価格を扱います。数値（金額）と通貨（JPY, USD）のペアです。\n異なる通貨同士の足し算（100 JPY + 1 USD）はエラーにするか、換算する必要があります。\nまた、'100' と表示する際は、通貨に応じて '¥100' や '$1.00' とフォーマットする必要があります。</p>
+            
+            
+            
+
+            <p></p>
+
+            <ul class="options">
+                <li><strong>A:</strong> 組み込みクラス (HashやArray)</li>
+                <li><strong>B:</strong> 独自クラス (Money)</li>
+                
+            </ul>
+
+            <button class="toggle-btn" onclick="document.getElementById('ans-1').style.display = 'block'">答えを見る</button>
+
+            <div id="ans-1" class="answer-section">
+                <p><strong>正解: B</strong></p>
+                <hr>
+                <p>"正解は B (独自クラス) です。\n\n`{ amount: 100</p>
+            </div>
+        </div>
+        
+        <div class="question-card">
+            <h3>Q3. ケース3: 2点間の座標 (例: ゲームや地図)</h3>
+            
+            
+            <p><strong>要件:</strong><br>2Dマップ上の位置を示す X座標 と Y座標 を持ちます。\nこのデータは大量（数万個）に生成される可能性があります。\n特別な計算メソッドは今のところ必要ありませんが、xとyという属性名は明確にしたいです。</p>
+            
+            
+            
+
+            <p></p>
+
+            <ul class="options">
+                <li><strong>A:</strong> 組み込みクラス (Hash)</li>
+                <li><strong>B:</strong> Struct (または Data)</li>
+                
+                <li><strong>C:</strong> 完全な独自クラス</li>
+                
+            </ul>
+
+            <button class="toggle-btn" onclick="document.getElementById('ans-2').style.display = 'block'">答えを見る</button>
+
+            <div id="ans-2" class="answer-section">
+                <p><strong>正解: B</strong></p>
+                <hr>
+                <p>推奨される正解は B (Struct/Data) です。\n\n単なるデータのコンテナであれば Hash でも可能ですが、`point[:x]` よりも `point.x` と書ける方がタイプミスを防げます。\nまた、大量に生成する場合、`Struct` や Ruby 3.2以降の `Data` は、完全なクラス定義を書くよりも簡潔で、メモリ効率も良い場合があります（特に `Data`）。\n「名前付きのデータ構造」が欲しいだけのときは、Structが組み込みと独自クラスの良い中間地点です。</p>
+            </div>
+        </div>
+        
+        <div class="question-card">
+            <h3>Q4. ケース4: APIのレスポンス解析 (例: API Client)</h3>
+            
+            
+            <p><strong>要件:</strong><br>外部のJSON APIを叩いて、レスポンスを受け取りました。\nレスポンスのフィールドは頻繁に変更される可能性があり、クライアント側ですべてのフィールドを事前に把握してマッピングするのはコストが高いです。\nとりあえずデータの中身をログに出したり、特定のキーだけ参照できれば十分です。</p>
+            
+            
+            
+
+            <p></p>
+
+            <ul class="options">
+                <li><strong>A:</strong> 組み込みクラス (Hash / JSON.parseの結果)</li>
+                <li><strong>B:</strong> 独自クラス (ResponseModel)</li>
+                
+            </ul>
+
+            <button class="toggle-btn" onclick="document.getElementById('ans-3').style.display = 'block'">答えを見る</button>
+
+            <div id="ans-3" class="answer-section">
+                <p><strong>正解: A</strong></p>
+                <hr>
+                <p>正解は A (Hash) です。\n\n構造が不安定、あるいは未知のデータ構造を扱う場合、厳密な独自クラス（Struct含む）を定義すると、フィールドが増減するたびに修正が必要になり、メンテナンスコストが跳ね上がります。\nこのような「境界」のデータ処理や、一時的なデータ保持には、柔軟な Hash が最適です。</p>
+            </div>
+        </div>
+        
+    </main>
+
+    <footer>
+        <p>Generated by Gemini CLI for Polished Ruby Programming</p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第1章 1.5 クイズ: Expert Collections</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
+    <style>
+        .question-card {
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+        .options {
+            list-style: none;
+            padding: 0;
+        }
+        .options li {
+            margin: 10px 0;
+        }
+        .answer-section {
+            display: none;
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #f0f8ff;
+            border-radius: 5px;
+        }
+        .toggle-btn {
+            margin-top: 10px;
+        }
+        pre {
+            background-color: #f4f4f4;
+            padding: 10px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="../index.html">← Back to Index</a>
+        <h1>第1章 1.5 クイズ: Expert Collections</h1>
+    </header>
+
+    <main>
+        
+        <div class="question-card">
+            <h3>Q1. ケース1: 巨大リストの包含チェック (N+1問題の亜種)</h3>
+            
+            
+            <p><strong>要件:</strong><br>10万人の `blocked_users` リストがあり、全ユーザー(100万人)に対して「ブロックされているか」を判定してフィルタリングしたい。</p>
+            
+            
+            
+            <pre><code>"blocked_users = [...]</code></pre>
+            
+
+            <p></p>
+
+            <ul class="options">
+                <li><strong>A:</strong> </li>
+                <li><strong>B:</strong> </li>
+                
+            </ul>
+
+            <button class="toggle-btn" onclick="document.getElementById('ans-0').style.display = 'block'">答えを見る</button>
+
+            <div id="ans-0" class="answer-section">
+                <p><strong>正解: </strong></p>
+                <hr>
+                <p></p>
+            </div>
+        </div>
+        
+        <div class="question-card">
+            <h3>Q2. ケース2: 共通部分の抽出 (Intersection)</h3>
+            
+            
+            <p><strong>要件:</strong><br>2つの巨大なIDリスト (A: 10万件, B: 10万件) があり、両方に存在するIDだけを抽出したい。</p>
+            
+            
+            
+            <pre><code>common_ids = list_a & list_b</code></pre>
+            
+
+            <p>Rubyの `Array#&` (積集合) の実装はどうなっている？</p>
+
+            <ul class="options">
+                <li><strong>A:</strong> 単純な二重ループ (O(N^2))</li>
+                <li><strong>B:</strong> 内部的に一時的なハッシュテーブルを作成して高速化している (O(N+M))</li>
+                
+                <li><strong>C:</strong> ソートしてから二分探索している (O(N log N))</li>
+                
+            </ul>
+
+            <button class="toggle-btn" onclick="document.getElementById('ans-1').style.display = 'block'">答えを見る</button>
+
+            <div id="ans-1" class="answer-section">
+                <p><strong>正解: B</strong></p>
+                <hr>
+                <p>正解は B です。\n\nRubyの `Array#&` は非常に賢く実装されており、内部的にハッシュテーブルを作成して重複排除と共通項抽出を行います。\nそのため、わざわざ手動で `Set.new(list_a) & Set.new(list_b)` と書かなくても、`Array#&` そのもので十分高速です。\nただし、何度も同じリストに対して演算を行うなら、最初から Set に変換しておく方が「変換コスト」を節約できます。</p>
+            </div>
+        </div>
+        
+        <div class="question-card">
+            <h3>Q3. ケース3: 重複の排除 (Uniqueness)</h3>
+            
+            
+            <p><strong>要件:</strong><br>APIレスポンスから重複したIDを取り除きたい。順序は保持したい。</p>
+            
+            
+            
+            <pre><code>ids.uniq</code></pre>
+            
+
+            <p>`uniq` メソッドのメモリ挙動として正しいのは？</p>
+
+            <ul class="options">
+                <li><strong>A:</strong> 配列をインプレースで書き換えるためメモリ効率が良い</li>
+                <li><strong>B:</strong> 内部的にハッシュを作るため、一時的にメモリ消費が増える</li>
+                
+                <li><strong>C:</strong> 隣り合う要素だけ比較するためメモリ消費は少ないが、ソート済みでないと機能しない</li>
+                
+            </ul>
+
+            <button class="toggle-btn" onclick="document.getElementById('ans-2').style.display = 'block'">答えを見る</button>
+
+            <div id="ans-2" class="answer-section">
+                <p><strong>正解: B</strong></p>
+                <hr>
+                <p>正解は B です。\n\n`uniq` も内部でハッシュテーブル（Set的な構造）を使って既出チェックを行います。\nそのため、非常に巨大な配列で `uniq` を呼ぶと、一時的に大きなメモリを消費する可能性があります。\nUNIXコマンドの `uniq` と違い、ソート済みである必要はありません。</p>
+            </div>
+        </div>
+        
+        <div class="question-card">
+            <h3>Q4. ケース4: Setの落とし穴 (Mutable Objects)</h3>
+            
+            
+            <p><strong>要件:</strong><br>Setに可変オブジェクト（例えば変更可能なString）を入れた後、そのオブジェクトの内容を変更した。</p>
+            
+            
+            
+            <pre><code>s = Set.new\nstr = \</code></pre>
+            
+
+            <p>この後の `s.include?(\</p>
+
+            <ul class="options">
+                <li><strong>A:</strong> Setが自動追従して \</li>
+                <li><strong>B:</strong> ハッシュ値が壊れて、どちらでも検索できなくなる（行方不明になる）</li>
+                
+                <li><strong>C:</strong> 元のハッシュ値のままなので \</li>
+                
+            </ul>
+
+            <button class="toggle-btn" onclick="document.getElementById('ans-3').style.display = 'block'">答えを見る</button>
+
+            <div id="ans-3" class="answer-section">
+                <p><strong>正解: B</strong></p>
+                <hr>
+                <p>正解は B です（最悪のケース）。\n\nSet（およびHashのキー）は、オブジェクトの `hash` 値をインデックスとして使用します。\n格納後にオブジェクトの内容が変わり、`hash` メソッドの返り値が変わってしまうと、Set内部のバケット位置と実際のハッシュ値が不一致になります（Rehashが必要）。\nSetやHashのキーには、必ず **Frozen Object (不変オブジェクト)** を使うのが鉄則です。</p>
+            </div>
+        </div>
+        
+    </main>
+
+    <footer>
+        <p>Generated by Gemini CLI for Polished Ruby Programming</p>
+    </footer>
+</body>
+</html>

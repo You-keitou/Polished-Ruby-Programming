@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第1章 1.3 クイズ: Numeric Types</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
+    <style>
+        .question-card {
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+        .options {
+            list-style: none;
+            padding: 0;
+        }
+        .options li {
+            margin: 10px 0;
+        }
+        .answer-section {
+            display: none;
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #f0f8ff;
+            border-radius: 5px;
+        }
+        .toggle-btn {
+            margin-top: 10px;
+        }
+        pre {
+            background-color: #f4f4f4;
+            padding: 10px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="../index.html">← Back to Index</a>
+        <h1>第1章 1.3 クイズ: Numeric Types</h1>
+    </header>
+
+    <main>
+        
+        <div class="question-card">
+            <h3>Q1. ケース1: 消費税の計算</h3>
+            
+            
+            <p><strong>要件:</strong><br>100円の商品の10%の消費税を計算し、合計金額を出したい。<br>正確性が何よりも重要です。</p>
+            
+            
+            
+            <pre><code>total = 100 * 1.1</code></pre>
+            
+
+            <p>この計算で `1.1` (Float) を使う際のリスクは？</p>
+
+            <ul class="options">
+                <li><strong>A:</strong> 全く問題ない</li>
+                <li><strong>B:</strong> 浮動小数点の誤差により、計算結果が 110.00000000000001 のようになる可能性がある</li>
+                
+                <li><strong>C:</strong> 処理速度が遅すぎる</li>
+                
+            </ul>
+
+            <button class="toggle-btn" onclick="document.getElementById('ans-0').style.display = 'block'">答えを見る</button>
+
+            <div id="ans-0" class="answer-section">
+                <p><strong>正解: B</strong></p>
+                <hr>
+                <p>正解は B です。<br><br>Float（浮動小数点）は2進数で計算するため、10進数の 0.1 などを正確に表現できません。<br>お金の計算に Float を使うのは厳禁です。Rubyでは `BigDecimal` を使うのが正解です。</p>
+            </div>
+        </div>
+        
+        <div class="question-card">
+            <h3>Q2. ケース2: 巨大な整数の計算</h3>
+            
+            
+            <p><strong>要件:</strong><br>宇宙の星の数のような、64bit整数（2^64）を超える非常に大きな数値を扱いたい。</p>
+            
+            
+            
+            <pre><code>large_num = 2**128</code></pre>
+            
+
+            <p>Rubyでこの数値を扱うために必要な特別なクラスや設定は？</p>
+
+            <ul class="options">
+                <li><strong>A:</strong> 何も必要ない（Integerクラスが自動で多倍長整数として扱う）</li>
+                <li><strong>B:</strong> BigInt クラスを require する必要がある</li>
+                
+                <li><strong>C:</strong> Rubyでは 64bit を超える数値は扱えない</li>
+                
+            </ul>
+
+            <button class="toggle-btn" onclick="document.getElementById('ans-1').style.display = 'block'">答えを見る</button>
+
+            <div id="ans-1" class="answer-section">
+                <p><strong>正解: A</strong></p>
+                <hr>
+                <p>正解は A です。<br><br>Rubyの `Integer` は、数値の大きさに応じて自動的にメモリを割り当てる「多倍長整数」です。<br>昔のRubyには Fixnum と Bignum がありましたが、現在は `Integer` に統合され、ユーザーはサイズを気にせず計算できます。</p>
+            </div>
+        </div>
+        
+        <div class="question-card">
+            <h3>Q3. ケース3: 比較の罠</h3>
+            
+            
+            
+            
+            <pre><code>x = 0.1 + 0.2\nputs x == 0.3</code></pre>
+            
+
+            <p>このコードの出力結果はどうなる？</p>
+
+            <ul class="options">
+                <li><strong>A:</strong> true</li>
+                <li><strong>B:</strong> false</li>
+                
+            </ul>
+
+            <button class="toggle-btn" onclick="document.getElementById('ans-2').style.display = 'block'">答えを見る</button>
+
+            <div id="ans-2" class="answer-section">
+                <p><strong>正解: B</strong></p>
+                <hr>
+                <p>正解は B (false) です。<br><br>実際に実行すると `0.1 + 0.2` は `0.30000000000000004` になります。<br>Float 同士を `==` で比較するのは非常に危険です。</p>
+            </div>
+        </div>
+        
+        <div class="question-card">
+            <h3>Q4. ケース4: 速度と精度のトレードオフ</h3>
+            
+            
+            <p><strong>要件:</strong><br>3Dゲームの座標計算や、物理シミュレーションで1秒間に何万回も計算を行いたい。<br>わずかな誤差は許容できるが、計算速度が極めて重要。</p>
+            
+            
+            
+
+            <p>どの型を使うべき？</p>
+
+            <ul class="options">
+                <li><strong>A:</strong> BigDecimal</li>
+                <li><strong>B:</strong> Rational (有理数)</li>
+                
+                <li><strong>C:</strong> Float</li>
+                
+            </ul>
+
+            <button class="toggle-btn" onclick="document.getElementById('ans-3').style.display = 'block'">答えを見る</button>
+
+            <div id="ans-3" class="answer-section">
+                <p><strong>正解: C</strong></p>
+                <hr>
+                <p>正解は C (Float) です。<br><br>`BigDecimal` は正確ですが、ソフトウェアで計算するため低速です。<br>一方、`Float` はCPUの浮動小数点演算ユニット(FPU)で直接処理されるため、圧倒的に高速です。<br>「絶対的な正確さ」か「速度」か、用途に応じた使い分けがプロの仕事です。</p>
+            </div>
+        </div>
+        
+    </main>
+
+    <footer>
+        <p>Generated by Gemini CLI for Polished Ruby Programming</p>
+    </footer>
+</body>
+</html>
