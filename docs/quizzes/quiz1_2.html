@@ -4,35 +4,104 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>第1章 1.2 クイズ: True, False, and Nil</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
     <style>
-        .question-card {
-            border: 1px solid #ddd;
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
             padding: 20px;
-            margin-bottom: 20px;
+            background-color: #f9f9f9;
+        }
+        header {
+            margin-bottom: 40px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 20px;
+        }
+        h1 { margin: 0; color: #2c3e50; }
+        a { color: #3498db; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+
+        .question-card {
+            background: white;
+            border: 1px solid #e0e0e0;
+            padding: 25px;
+            margin-bottom: 30px;
             border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
+        h3 { margin-top: 0; color: #2c3e50; }
+        
+        .requirement {
+            background-color: #f8f9fa;
+            border-left: 4px solid #3498db;
+            padding: 10px 15px;
+            margin: 15px 0;
+            font-size: 0.95em;
+        }
+
+        pre {
+            background-color: #2d3436;
+            color: #dfe6e9;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-family: Consolas, Monaco, "Andale Mono", monospace;
+        }
+
         .options {
-            list-style: none;
-            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 20px;
         }
-        .options li {
-            margin: 10px 0;
+        .option-btn {
+            text-align: left;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.2s;
+            color: #333;
         }
+        .option-btn:hover {
+            background-color: #f1f2f6;
+            border-color: #bdc3c7;
+        }
+        
+        /* Interactive States */
+        .option-btn.correct {
+            background-color: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+            font-weight: bold;
+        }
+        .option-btn.incorrect {
+            background-color: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+            opacity: 0.7;
+        }
+        .option-btn:disabled {
+            cursor: default;
+        }
+
         .answer-section {
             display: none;
-            margin-top: 15px;
-            padding: 15px;
-            background-color: #f0f8ff;
-            border-radius: 5px;
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #e8f4fd;
+            border: 1px solid #b6d4fe;
+            border-radius: 6px;
         }
-        .toggle-btn {
-            margin-top: 10px;
-        }
-        pre {
-            background-color: #f4f4f4;
-            padding: 10px;
-            overflow-x: auto;
+        .answer-label {
+            font-weight: bold;
+            color: #004085;
+            font-size: 1.1em;
+            margin-bottom: 10px;
         }
     </style>
 </head>
@@ -44,11 +113,13 @@
 
     <main>
         
-        <div class="question-card">
+        <div class="question-card" id="q-0" data-answer="C">
             <h3>Q1. ケース1: 環境変数の落とし穴 (Rails/Env)</h3>
             
             
-            <p><strong>要件:</strong><br>環境変数 'ENABLE_FEATURE' を読み込んで、機能のオン/オフを判定したい。\n環境変数がセットされていない場合は、デフォルトで `true` (有効) にしたい。\n環境変数は文字列として返ってくることに注意。</p>
+            <div class="requirement">
+                <strong>要件:</strong><br>環境変数 'ENABLE_FEATURE' を読み込んで、機能のオン/オフを判定したい。\n環境変数がセットされていない場合は、デフォルトで `true` (有効) にしたい。\n環境変数は文字列として返ってくることに注意。
+            </div>
             
             
             
@@ -57,28 +128,30 @@
 
             <p>ユーザーが `ENABLE_FEATURE='false'` と設定しました。このコードの評価結果はどうなる？</p>
 
-            <ul class="options">
-                <li><strong>A:</strong> true (有効)</li>
-                <li><strong>B:</strong> false (無効)</li>
+            <div class="options">
+                <button class="option-btn" onclick="checkAnswer(0, 'A')">A: true (有効)</button>
+                <button class="option-btn" onclick="checkAnswer(0, 'B')">B: false (無効)</button>
                 
-                <li><strong>C:</strong> \</li>
+                <button class="option-btn" onclick="checkAnswer(0, 'C')">C: \</button>
                 
-            </ul>
-
-            <button class="toggle-btn" onclick="document.getElementById('ans-0').style.display = 'block'">答えを見る</button>
+            </div>
 
             <div id="ans-0" class="answer-section">
-                <p><strong>正解: C</strong></p>
-                <hr>
-                <p>正解は C (\</p>
+                <div class="answer-label">正解: C</div>
+                <hr style="border-top: 1px solid #b6d4fe; margin: 10px 0;">
+                <div style="color: #333;">
+                    正解は C (\
+                </div>
             </div>
         </div>
         
-        <div class="question-card">
+        <div class="question-card" id="q-1" data-answer="B">
             <h3>Q2. ケース2:破壊的メソッドとぼっち演算子</h3>
             
             
-            <p><strong>要件:</strong><br>ユーザー入力を正規化したい。「空白の除去(strip!)」と「小文字化(downcase!)」をチェーンさせたい。</p>
+            <div class="requirement">
+                <strong>要件:</strong><br>ユーザー入力を正規化したい。「空白の除去(strip!)」と「小文字化(downcase!)」をチェーンさせたい。
+            </div>
             
             
             
@@ -87,28 +160,30 @@
 
             <p>inputに余計な空白が **なかった** 場合、normalized の値は何になる？</p>
 
-            <ul class="options">
-                <li><strong>A:</strong> \</li>
-                <li><strong>B:</strong> nil</li>
+            <div class="options">
+                <button class="option-btn" onclick="checkAnswer(1, 'A')">A: \</button>
+                <button class="option-btn" onclick="checkAnswer(1, 'B')">B: nil</button>
                 
-                <li><strong>C:</strong> \</li>
+                <button class="option-btn" onclick="checkAnswer(1, 'C')">C: \</button>
                 
-            </ul>
-
-            <button class="toggle-btn" onclick="document.getElementById('ans-1').style.display = 'block'">答えを見る</button>
+            </div>
 
             <div id="ans-1" class="answer-section">
-                <p><strong>正解: B</strong></p>
-                <hr>
-                <p>正解は B (nil) です。\n\n1. `input.strip!` が呼ばれます。空白がないので `nil` が返ります。\n2. `nil&.downcase!` が呼ばれます。`&.` なので `nil` が返ります。\n\n結果、`normalized` は `nil` になります。\nチェーンを使いたいなら、破壊的でない `strip.downcase` を使うか、`tap` を活用する必要があります。</p>
+                <div class="answer-label">正解: B</div>
+                <hr style="border-top: 1px solid #b6d4fe; margin: 10px 0;">
+                <div style="color: #333;">
+                    正解は B (nil) です。\n\n1. `input.strip!` が呼ばれます。空白がないので `nil` が返ります。\n2. `nil&.downcase!` が呼ばれます。`&.` なので `nil` が返ります。\n\n結果、`normalized` は `nil` になります。\nチェーンを使いたいなら、破壊的でない `strip.downcase` を使うか、`tap` を活用する必要があります。
+                </div>
             </div>
         </div>
         
-        <div class="question-card">
+        <div class="question-card" id="q-2" data-answer="B">
             <h3>Q3. ケース3: 設定値の 3-State (ActiveModel)</h3>
             
             
-            <p><strong>要件:</strong><br>ある属性 `admin_flag` があります。この値は `true`, `false`, `nil` のいずれかを取り得ます。\n「値がセットされている（true または false）」かつ「nilではない」ことを判定したい。</p>
+            <div class="requirement">
+                <strong>要件:</strong><br>ある属性 `admin_flag` があります。この値は `true`, `false`, `nil` のいずれかを取り得ます。\n「値がセットされている（true または false）」かつ「nilではない」ことを判定したい。
+            </div>
             
             
             
@@ -117,26 +192,28 @@
 
             <p>このコードで「falseがセットされている場合」は処理が実行される？</p>
 
-            <ul class="options">
-                <li><strong>A:</strong> 実行される</li>
-                <li><strong>B:</strong> 実行されない</li>
+            <div class="options">
+                <button class="option-btn" onclick="checkAnswer(2, 'A')">A: 実行される</button>
+                <button class="option-btn" onclick="checkAnswer(2, 'B')">B: 実行されない</button>
                 
-            </ul>
-
-            <button class="toggle-btn" onclick="document.getElementById('ans-2').style.display = 'block'">答えを見る</button>
+            </div>
 
             <div id="ans-2" class="answer-section">
-                <p><strong>正解: B</strong></p>
-                <hr>
-                <p>正解は B (実行されない) です。\n\n`false` はRubyにおいて「偽」なので、if文に入りません。\nしかし要件は「値がセットされている（falseも含む）」ことの判定です。\n\nこれを満たすには `!object.admin_flag.nil?` や、Railsなら `present?` ではなく `inclusion validation` など、文脈に応じた「存在チェック」が必要です。\n1.2の問題で扱う「デフォルト値の上書き」もこのパターンです。</p>
+                <div class="answer-label">正解: B</div>
+                <hr style="border-top: 1px solid #b6d4fe; margin: 10px 0;">
+                <div style="color: #333;">
+                    正解は B (実行されない) です。\n\n`false` はRubyにおいて「偽」なので、if文に入りません。\nしかし要件は「値がセットされている（falseも含む）」ことの判定です。\n\nこれを満たすには `!object.admin_flag.nil?` や、Railsなら `present?` ではなく `inclusion validation` など、文脈に応じた「存在チェック」が必要です。\n1.2の問題で扱う「デフォルト値の上書き」もこのパターンです。
+                </div>
             </div>
         </div>
         
-        <div class="question-card">
+        <div class="question-card" id="q-3" data-answer="B">
             <h3>Q4. ケース4: ハッシュのキー検索 (API Client)</h3>
             
             
-            <p><strong>要件:</strong><br>APIレスポンスのハッシュ `response` から `:status` キーの値を取得したい。\nただし、`:status` キー自体が存在しない場合のみエラーにしたい（値が nil の場合はOK）。</p>
+            <div class="requirement">
+                <strong>要件:</strong><br>APIレスポンスのハッシュ `response` から `:status` キーの値を取得したい。\nただし、`:status` キー自体が存在しない場合のみエラーにしたい（値が nil の場合はOK）。
+            </div>
             
             
             
@@ -145,27 +222,52 @@
 
             <p>このコードの問題点は？</p>
 
-            <ul class="options">
-                <li><strong>A:</strong> 問題ない</li>
-                <li><strong>B:</strong> 値が false や nil の時に誤ってエラーになる</li>
+            <div class="options">
+                <button class="option-btn" onclick="checkAnswer(3, 'A')">A: 問題ない</button>
+                <button class="option-btn" onclick="checkAnswer(3, 'B')">B: 値が false や nil の時に誤ってエラーになる</button>
                 
-                <li><strong>C:</strong> シンボルではなく文字列でアクセスすべき</li>
+                <button class="option-btn" onclick="checkAnswer(3, 'C')">C: シンボルではなく文字列でアクセスすべき</button>
                 
-            </ul>
-
-            <button class="toggle-btn" onclick="document.getElementById('ans-3').style.display = 'block'">答えを見る</button>
+            </div>
 
             <div id="ans-3" class="answer-section">
-                <p><strong>正解: B</strong></p>
-                <hr>
-                <p>正解は B です。\n\n`response[:status]` が `nil` を返したとき、それが「キーがないからnil」なのか「値がnilだからnil」なのか、この書き方では区別できません。\nまた、値が `false` の場合も `unless` に引っかかってしまいます。\n\n正解パターン: `response.key?(:status)` または `response.fetch(:status)` を使いましょう。</p>
+                <div class="answer-label">正解: B</div>
+                <hr style="border-top: 1px solid #b6d4fe; margin: 10px 0;">
+                <div style="color: #333;">
+                    正解は B です。\n\n`response[:status]` が `nil` を返したとき、それが「キーがないからnil」なのか「値がnilだからnil」なのか、この書き方では区別できません。\nまた、値が `false` の場合も `unless` に引っかかってしまいます。\n\n正解パターン: `response.key?(:status)` または `response.fetch(:status)` を使いましょう。
+                </div>
             </div>
         </div>
         
     </main>
 
-    <footer>
-        <p>Generated by Gemini CLI for Polished Ruby Programming</p>
-    </footer>
+    <script>
+        function checkAnswer(questionIndex, selectedOption) {
+            const card = document.getElementById('q-' + questionIndex);
+            const correctAnswer = card.getAttribute('data-answer');
+            const answerSection = document.getElementById('ans-' + questionIndex);
+            const buttons = card.querySelectorAll('.option-btn');
+
+            // Disable all buttons to prevent multiple guesses (optional)
+            buttons.forEach(btn => {
+                btn.disabled = true;
+                const optionText = btn.textContent;
+                // Check if this button corresponds to A, B, or C
+                const optionChar = optionText.trim().charAt(0);
+                
+                if (optionChar === correctAnswer) {
+                    btn.classList.add('correct');
+                    // Add checkmark
+                    btn.innerHTML += ' ✅';
+                } else if (optionChar === selectedOption && selectedOption !== correctAnswer) {
+                    btn.classList.add('incorrect');
+                    btn.innerHTML += ' ❌';
+                }
+            });
+
+            // Show explanation
+            answerSection.style.display = 'block';
+        }
+    </script>
 </body>
 </html>

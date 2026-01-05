@@ -4,35 +4,104 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>第1章 1.5 クイズ: Expert Collections</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
     <style>
-        .question-card {
-            border: 1px solid #ddd;
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
             padding: 20px;
-            margin-bottom: 20px;
+            background-color: #f9f9f9;
+        }
+        header {
+            margin-bottom: 40px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 20px;
+        }
+        h1 { margin: 0; color: #2c3e50; }
+        a { color: #3498db; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+
+        .question-card {
+            background: white;
+            border: 1px solid #e0e0e0;
+            padding: 25px;
+            margin-bottom: 30px;
             border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
+        h3 { margin-top: 0; color: #2c3e50; }
+        
+        .requirement {
+            background-color: #f8f9fa;
+            border-left: 4px solid #3498db;
+            padding: 10px 15px;
+            margin: 15px 0;
+            font-size: 0.95em;
+        }
+
+        pre {
+            background-color: #2d3436;
+            color: #dfe6e9;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-family: Consolas, Monaco, "Andale Mono", monospace;
+        }
+
         .options {
-            list-style: none;
-            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 20px;
         }
-        .options li {
-            margin: 10px 0;
+        .option-btn {
+            text-align: left;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.2s;
+            color: #333;
         }
+        .option-btn:hover {
+            background-color: #f1f2f6;
+            border-color: #bdc3c7;
+        }
+        
+        /* Interactive States */
+        .option-btn.correct {
+            background-color: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+            font-weight: bold;
+        }
+        .option-btn.incorrect {
+            background-color: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+            opacity: 0.7;
+        }
+        .option-btn:disabled {
+            cursor: default;
+        }
+
         .answer-section {
             display: none;
-            margin-top: 15px;
-            padding: 15px;
-            background-color: #f0f8ff;
-            border-radius: 5px;
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #e8f4fd;
+            border: 1px solid #b6d4fe;
+            border-radius: 6px;
         }
-        .toggle-btn {
-            margin-top: 10px;
-        }
-        pre {
-            background-color: #f4f4f4;
-            padding: 10px;
-            overflow-x: auto;
+        .answer-label {
+            font-weight: bold;
+            color: #004085;
+            font-size: 1.1em;
+            margin-bottom: 10px;
         }
     </style>
 </head>
@@ -44,40 +113,43 @@
 
     <main>
         
-        <div class="question-card">
+        <div class="question-card" id="q-0" data-answer="">
             <h3>Q1. ケース1: 巨大リストの包含チェック (N+1問題の亜種)</h3>
             
             
-            <p><strong>要件:</strong><br>10万人の `blocked_users` リストがあり、全ユーザー(100万人)に対して「ブロックされているか」を判定してフィルタリングしたい。</p>
+            <div class="requirement">
+                <strong>要件:</strong><br>10万人の `blocked_users` リストがあり、全ユーザー(100万人)に対して「ブロックされているか」を判定してフィルタリングしたい。
+            </div>
             
             
             
-            <pre><code>"blocked_users = [...]
-users.select { |u| blocked_users.i</code></pre>
+            <pre><code>"blocked_users = [...]</code></pre>
             
 
             <p></p>
 
-            <ul class="options">
-                <li><strong>A:</strong> </li>
-                <li><strong>B:</strong> </li>
+            <div class="options">
+                <button class="option-btn" onclick="checkAnswer(0, 'A')">A: </button>
+                <button class="option-btn" onclick="checkAnswer(0, 'B')">B: </button>
                 
-            </ul>
-
-            <button class="toggle-btn" onclick="document.getElementById('ans-0').style.display = 'block'">答えを見る</button>
+            </div>
 
             <div id="ans-0" class="answer-section">
-                <p><strong>正解: </strong></p>
-                <hr>
-                <p></p>
+                <div class="answer-label">正解: </div>
+                <hr style="border-top: 1px solid #b6d4fe; margin: 10px 0;">
+                <div style="color: #333;">
+                    
+                </div>
             </div>
         </div>
         
-        <div class="question-card">
+        <div class="question-card" id="q-1" data-answer="B">
             <h3>Q2. ケース2: 共通部分の抽出 (Intersection)</h3>
             
             
-            <p><strong>要件:</strong><br>2つの巨大なIDリスト (A: 10万件, B: 10万件) があり、両方に存在するIDだけを抽出したい。</p>
+            <div class="requirement">
+                <strong>要件:</strong><br>2つの巨大なIDリスト (A: 10万件, B: 10万件) があり、両方に存在するIDだけを抽出したい。
+            </div>
             
             
             
@@ -86,28 +158,30 @@ users.select { |u| blocked_users.i</code></pre>
 
             <p>Rubyの `Array#&` (積集合) の実装はどうなっている？</p>
 
-            <ul class="options">
-                <li><strong>A:</strong> 単純な二重ループ (O(N^2))</li>
-                <li><strong>B:</strong> 内部的に一時的なハッシュテーブルを作成して高速化している (O(N+M))</li>
+            <div class="options">
+                <button class="option-btn" onclick="checkAnswer(1, 'A')">A: 単純な二重ループ (O(N^2))</button>
+                <button class="option-btn" onclick="checkAnswer(1, 'B')">B: 内部的に一時的なハッシュテーブルを作成して高速化している (O(N+M))</button>
                 
-                <li><strong>C:</strong> ソートしてから二分探索している (O(N log N))</li>
+                <button class="option-btn" onclick="checkAnswer(1, 'C')">C: ソートしてから二分探索している (O(N log N))</button>
                 
-            </ul>
-
-            <button class="toggle-btn" onclick="document.getElementById('ans-1').style.display = 'block'">答えを見る</button>
+            </div>
 
             <div id="ans-1" class="answer-section">
-                <p><strong>正解: B</strong></p>
-                <hr>
-                <p>正解は B です。\n\nRubyの `Array#&` は非常に賢く実装されており、内部的にハッシュテーブルを作成して重複排除と共通項抽出を行います。\nそのため、わざわざ手動で `Set.new(list_a) & Set.new(list_b)` と書かなくても、`Array#&` そのもので十分高速です。\nただし、何度も同じリストに対して演算を行うなら、最初から Set に変換しておく方が「変換コスト」を節約できます。</p>
+                <div class="answer-label">正解: B</div>
+                <hr style="border-top: 1px solid #b6d4fe; margin: 10px 0;">
+                <div style="color: #333;">
+                    正解は B です。\n\nRubyの `Array#&` は非常に賢く実装されており、内部的にハッシュテーブルを作成して重複排除と共通項抽出を行います。\nそのため、わざわざ手動で `Set.new(list_a) & Set.new(list_b)` と書かなくても、`Array#&` そのもので十分高速です。\nただし、何度も同じリストに対して演算を行うなら、最初から Set に変換しておく方が「変換コスト」を節約できます。
+                </div>
             </div>
         </div>
         
-        <div class="question-card">
+        <div class="question-card" id="q-2" data-answer="B">
             <h3>Q3. ケース3: 重複の排除 (Uniqueness)</h3>
             
             
-            <p><strong>要件:</strong><br>APIレスポンスから重複したIDを取り除きたい。順序は保持したい。</p>
+            <div class="requirement">
+                <strong>要件:</strong><br>APIレスポンスから重複したIDを取り除きたい。順序は保持したい。
+            </div>
             
             
             
@@ -116,28 +190,30 @@ users.select { |u| blocked_users.i</code></pre>
 
             <p>`uniq` メソッドのメモリ挙動として正しいのは？</p>
 
-            <ul class="options">
-                <li><strong>A:</strong> 配列をインプレースで書き換えるためメモリ効率が良い</li>
-                <li><strong>B:</strong> 内部的にハッシュを作るため、一時的にメモリ消費が増える</li>
+            <div class="options">
+                <button class="option-btn" onclick="checkAnswer(2, 'A')">A: 配列をインプレースで書き換えるためメモリ効率が良い</button>
+                <button class="option-btn" onclick="checkAnswer(2, 'B')">B: 内部的にハッシュを作るため、一時的にメモリ消費が増える</button>
                 
-                <li><strong>C:</strong> 隣り合う要素だけ比較するためメモリ消費は少ないが、ソート済みでないと機能しない</li>
+                <button class="option-btn" onclick="checkAnswer(2, 'C')">C: 隣り合う要素だけ比較するためメモリ消費は少ないが、ソート済みでないと機能しない</button>
                 
-            </ul>
-
-            <button class="toggle-btn" onclick="document.getElementById('ans-2').style.display = 'block'">答えを見る</button>
+            </div>
 
             <div id="ans-2" class="answer-section">
-                <p><strong>正解: B</strong></p>
-                <hr>
-                <p>正解は B です。\n\n`uniq` も内部でハッシュテーブル（Set的な構造）を使って既出チェックを行います。\nそのため、非常に巨大な配列で `uniq` を呼ぶと、一時的に大きなメモリを消費する可能性があります。\nUNIXコマンドの `uniq` と違い、ソート済みである必要はありません。</p>
+                <div class="answer-label">正解: B</div>
+                <hr style="border-top: 1px solid #b6d4fe; margin: 10px 0;">
+                <div style="color: #333;">
+                    正解は B です。\n\n`uniq` も内部でハッシュテーブル（Set的な構造）を使って既出チェックを行います。\nそのため、非常に巨大な配列で `uniq` を呼ぶと、一時的に大きなメモリを消費する可能性があります。\nUNIXコマンドの `uniq` と違い、ソート済みである必要はありません。
+                </div>
             </div>
         </div>
         
-        <div class="question-card">
+        <div class="question-card" id="q-3" data-answer="B">
             <h3>Q4. ケース4: Setの落とし穴 (Mutable Objects)</h3>
             
             
-            <p><strong>要件:</strong><br>Setに可変オブジェクト（例えば変更可能なString）を入れた後、そのオブジェクトの内容を変更した。</p>
+            <div class="requirement">
+                <strong>要件:</strong><br>Setに可変オブジェクト（例えば変更可能なString）を入れた後、そのオブジェクトの内容を変更した。
+            </div>
             
             
             
@@ -146,27 +222,52 @@ users.select { |u| blocked_users.i</code></pre>
 
             <p>この後の `s.include?(\</p>
 
-            <ul class="options">
-                <li><strong>A:</strong> Setが自動追従して \</li>
-                <li><strong>B:</strong> ハッシュ値が壊れて、どちらでも検索できなくなる（行方不明になる）</li>
+            <div class="options">
+                <button class="option-btn" onclick="checkAnswer(3, 'A')">A: Setが自動追従して \</button>
+                <button class="option-btn" onclick="checkAnswer(3, 'B')">B: ハッシュ値が壊れて、どちらでも検索できなくなる（行方不明になる）</button>
                 
-                <li><strong>C:</strong> 元のハッシュ値のままなので \</li>
+                <button class="option-btn" onclick="checkAnswer(3, 'C')">C: 元のハッシュ値のままなので \</button>
                 
-            </ul>
-
-            <button class="toggle-btn" onclick="document.getElementById('ans-3').style.display = 'block'">答えを見る</button>
+            </div>
 
             <div id="ans-3" class="answer-section">
-                <p><strong>正解: B</strong></p>
-                <hr>
-                <p>正解は B です（最悪のケース）。\n\nSet（およびHashのキー）は、オブジェクトの `hash` 値をインデックスとして使用します。\n格納後にオブジェクトの内容が変わり、`hash` メソッドの返り値が変わってしまうと、Set内部のバケット位置と実際のハッシュ値が不一致になります（Rehashが必要）。\nSetやHashのキーには、必ず **Frozen Object (不変オブジェクト)** を使うのが鉄則です。</p>
+                <div class="answer-label">正解: B</div>
+                <hr style="border-top: 1px solid #b6d4fe; margin: 10px 0;">
+                <div style="color: #333;">
+                    正解は B です（最悪のケース）。\n\nSet（およびHashのキー）は、オブジェクトの `hash` 値をインデックスとして使用します。\n格納後にオブジェクトの内容が変わり、`hash` メソッドの返り値が変わってしまうと、Set内部のバケット位置と実際のハッシュ値が不一致になります（Rehashが必要）。\nSetやHashのキーには、必ず **Frozen Object (不変オブジェクト)** を使うのが鉄則です。
+                </div>
             </div>
         </div>
         
     </main>
 
-    <footer>
-        <p>Generated by Gemini CLI for Polished Ruby Programming</p>
-    </footer>
+    <script>
+        function checkAnswer(questionIndex, selectedOption) {
+            const card = document.getElementById('q-' + questionIndex);
+            const correctAnswer = card.getAttribute('data-answer');
+            const answerSection = document.getElementById('ans-' + questionIndex);
+            const buttons = card.querySelectorAll('.option-btn');
+
+            // Disable all buttons to prevent multiple guesses (optional)
+            buttons.forEach(btn => {
+                btn.disabled = true;
+                const optionText = btn.textContent;
+                // Check if this button corresponds to A, B, or C
+                const optionChar = optionText.trim().charAt(0);
+                
+                if (optionChar === correctAnswer) {
+                    btn.classList.add('correct');
+                    // Add checkmark
+                    btn.innerHTML += ' ✅';
+                } else if (optionChar === selectedOption && selectedOption !== correctAnswer) {
+                    btn.classList.add('incorrect');
+                    btn.innerHTML += ' ❌';
+                }
+            });
+
+            // Show explanation
+            answerSection.style.display = 'block';
+        }
+    </script>
 </body>
 </html>

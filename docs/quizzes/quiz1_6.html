@@ -4,35 +4,104 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>第1章 1.6 クイズ: The Power of Struct & Data</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
     <style>
-        .question-card {
-            border: 1px solid #ddd;
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
             padding: 20px;
-            margin-bottom: 20px;
+            background-color: #f9f9f9;
+        }
+        header {
+            margin-bottom: 40px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 20px;
+        }
+        h1 { margin: 0; color: #2c3e50; }
+        a { color: #3498db; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+
+        .question-card {
+            background: white;
+            border: 1px solid #e0e0e0;
+            padding: 25px;
+            margin-bottom: 30px;
             border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
+        h3 { margin-top: 0; color: #2c3e50; }
+        
+        .requirement {
+            background-color: #f8f9fa;
+            border-left: 4px solid #3498db;
+            padding: 10px 15px;
+            margin: 15px 0;
+            font-size: 0.95em;
+        }
+
+        pre {
+            background-color: #2d3436;
+            color: #dfe6e9;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-family: Consolas, Monaco, "Andale Mono", monospace;
+        }
+
         .options {
-            list-style: none;
-            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 20px;
         }
-        .options li {
-            margin: 10px 0;
+        .option-btn {
+            text-align: left;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.2s;
+            color: #333;
         }
+        .option-btn:hover {
+            background-color: #f1f2f6;
+            border-color: #bdc3c7;
+        }
+        
+        /* Interactive States */
+        .option-btn.correct {
+            background-color: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+            font-weight: bold;
+        }
+        .option-btn.incorrect {
+            background-color: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+            opacity: 0.7;
+        }
+        .option-btn:disabled {
+            cursor: default;
+        }
+
         .answer-section {
             display: none;
-            margin-top: 15px;
-            padding: 15px;
-            background-color: #f0f8ff;
-            border-radius: 5px;
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #e8f4fd;
+            border: 1px solid #b6d4fe;
+            border-radius: 6px;
         }
-        .toggle-btn {
-            margin-top: 10px;
-        }
-        pre {
-            background-color: #f4f4f4;
-            padding: 10px;
-            overflow-x: auto;
+        .answer-label {
+            font-weight: bold;
+            color: #004085;
+            font-size: 1.1em;
+            margin-bottom: 10px;
         }
     </style>
 </head>
@@ -44,7 +113,7 @@
 
     <main>
         
-        <div class="question-card">
+        <div class="question-card" id="q-0" data-answer="B">
             <h3>Q1. ケース1: Struct の継承パターン</h3>
             
             
@@ -55,80 +124,84 @@
 
             <p>この定義方法は『Polished Ruby Programming』において、なぜ避けるべきとされている？</p>
 
-            <ul class="options">
-                <li><strong>A:</strong> 実行速度が極端に遅くなるから</li>
-                <li><strong>B:</strong> 無名クラスが継承階層に入り、予期しない動作や継承の複雑さを生むから</li>
+            <div class="options">
+                <button class="option-btn" onclick="checkAnswer(0, 'A')">A: 実行速度が極端に遅くなるから</button>
+                <button class="option-btn" onclick="checkAnswer(0, 'B')">B: 無名クラスが継承階層に入り、予期しない動作や継承の複雑さを生むから</button>
                 
-                <li><strong>C:</strong> Ruby 3.0以降で非推奨になったから</li>
+                <button class="option-btn" onclick="checkAnswer(0, 'C')">C: Ruby 3.0以降で非推奨になったから</button>
                 
-            </ul>
-
-            <button class="toggle-btn" onclick="document.getElementById('ans-0').style.display = 'block'">答えを見る</button>
+            </div>
 
             <div id="ans-0" class="answer-section">
-                <p><strong>正解: B</strong></p>
-                <hr>
-                <p>正解は B です。<br><br>`class User < Struct.new(...)` と書くと、`User` と `Struct` の間に「名前のない中間クラス」が挟まってしまいます。<br>著者は `User = Struct.new(...)` と定義するか、あるいは Struct.new にブロックを渡してメソッドを定義することを推奨しています。</p>
+                <div class="answer-label">正解: B</div>
+                <hr style="border-top: 1px solid #b6d4fe; margin: 10px 0;">
+                <div style="color: #333;">
+                    正解は B です。<br><br>`class User < Struct.new(...)` と書くと、`User` と `Struct` の間に「名前のない中間クラス」が挟まってしまいます。<br>著者は `User = Struct.new(...)` と定義するか、あるいは Struct.new にブロックを渡してメソッドを定義することを推奨しています。
+                </div>
             </div>
         </div>
         
-        <div class="question-card">
+        <div class="question-card" id="q-1" data-answer="C">
             <h3>Q2. ケース2: メモリ効率 (Memory footprint)</h3>
             
             
-            <p><strong>要件:</strong><br>100万個の「座標データ (x, y)」をメモリに保持したい。</p>
+            <div class="requirement">
+                <strong>要件:</strong><br>100万個の「座標データ (x, y)」をメモリに保持したい。
+            </div>
             
             
             
 
             <p>「通常のクラス」「Hash」「Struct」の中で、一般的に最もメモリ消費が少ないのは？</p>
 
-            <ul class="options">
-                <li><strong>A:</strong> Hash</li>
-                <li><strong>B:</strong> 通常のクラス (attr_accessor 使用)</li>
+            <div class="options">
+                <button class="option-btn" onclick="checkAnswer(1, 'A')">A: Hash</button>
+                <button class="option-btn" onclick="checkAnswer(1, 'B')">B: 通常のクラス (attr_accessor 使用)</button>
                 
-                <li><strong>C:</strong> Struct</li>
+                <button class="option-btn" onclick="checkAnswer(1, 'C')">C: Struct</button>
                 
-            </ul>
-
-            <button class="toggle-btn" onclick="document.getElementById('ans-1').style.display = 'block'">答えを見る</button>
+            </div>
 
             <div id="ans-1" class="answer-section">
-                <p><strong>正解: C</strong></p>
-                <hr>
-                <p>正解は C です。<br><br>`Struct` はインスタンス変数をハッシュ形式で保持せず、内部的に最適化されたスロットに格納するため、通常のクラスやHashよりもメモリ効率が良い傾向にあります。<br>大量の小さなオブジェクトを作る場合は、Struct が非常に有利です。</p>
+                <div class="answer-label">正解: C</div>
+                <hr style="border-top: 1px solid #b6d4fe; margin: 10px 0;">
+                <div style="color: #333;">
+                    正解は C です。<br><br>`Struct` はインスタンス変数をハッシュ形式で保持せず、内部的に最適化されたスロットに格納するため、通常のクラスやHashよりもメモリ効率が良い傾向にあります。<br>大量の小さなオブジェクトを作る場合は、Struct が非常に有利です。
+                </div>
             </div>
         </div>
         
-        <div class="question-card">
+        <div class="question-card" id="q-2" data-answer="B">
             <h3>Q3. ケース3: Ruby 3.2 の新機能 'Data'</h3>
             
             
-            <p><strong>要件:</strong><br>値が変更されないことを保証したい「不変なデータ構造 (Value Object)」を定義したい。</p>
+            <div class="requirement">
+                <strong>要件:</strong><br>値が変更されないことを保証したい「不変なデータ構造 (Value Object)」を定義したい。
+            </div>
             
             
             
 
             <p>Struct に代わる Ruby 3.2 以降の推奨クラスは？</p>
 
-            <ul class="options">
-                <li><strong>A:</strong> ImmutableStruct</li>
-                <li><strong>B:</strong> Data</li>
+            <div class="options">
+                <button class="option-btn" onclick="checkAnswer(2, 'A')">A: ImmutableStruct</button>
+                <button class="option-btn" onclick="checkAnswer(2, 'B')">B: Data</button>
                 
-                <li><strong>C:</strong> Record</li>
+                <button class="option-btn" onclick="checkAnswer(2, 'C')">C: Record</button>
                 
-            </ul>
-
-            <button class="toggle-btn" onclick="document.getElementById('ans-2').style.display = 'block'">答えを見る</button>
+            </div>
 
             <div id="ans-2" class="answer-section">
-                <p><strong>正解: B</strong></p>
-                <hr>
-                <p>正解は B です。<br><br>`Data.define(:id, :name)` は `Struct` に似ていますが、生成されたオブジェクトは不変 (Immutable) です。<br>`Struct` のようにあとから値を書き換えることができないため、バグを防ぎやすく、現代的な設計に適しています。</p>
+                <div class="answer-label">正解: B</div>
+                <hr style="border-top: 1px solid #b6d4fe; margin: 10px 0;">
+                <div style="color: #333;">
+                    正解は B です。<br><br>`Data.define(:id, :name)` は `Struct` に似ていますが、生成されたオブジェクトは不変 (Immutable) です。<br>`Struct` のようにあとから値を書き換えることができないため、バグを防ぎやすく、現代的な設計に適しています。
+                </div>
             </div>
         </div>
         
-        <div class="question-card">
+        <div class="question-card" id="q-3" data-answer="A">
             <h3>Q4. ケース4: キーワード引数への対応</h3>
             
             
@@ -139,27 +212,52 @@
 
             <p>この `keyword_init: true` を使う最大のメリットは？</p>
 
-            <ul class="options">
-                <li><strong>A:</strong> 引数の順番を覚えなくて済むため、可読性と安全性が向上する</li>
-                <li><strong>B:</strong> 内部的な処理が Hash になるため高速化する</li>
+            <div class="options">
+                <button class="option-btn" onclick="checkAnswer(3, 'A')">A: 引数の順番を覚えなくて済むため、可読性と安全性が向上する</button>
+                <button class="option-btn" onclick="checkAnswer(3, 'B')">B: 内部的な処理が Hash になるため高速化する</button>
                 
-                <li><strong>C:</strong> JSONへの変換が自動化される</li>
+                <button class="option-btn" onclick="checkAnswer(3, 'C')">C: JSONへの変換が自動化される</button>
                 
-            </ul>
-
-            <button class="toggle-btn" onclick="document.getElementById('ans-3').style.display = 'block'">答えを見る</button>
+            </div>
 
             <div id="ans-3" class="answer-section">
-                <p><strong>正解: A</strong></p>
-                <hr>
-                <p>正解は A です。<br><br>属性が多いデータ構造では、位置引数 (`10, 20, 30...`) だと順番を間違えるリスクがあります。<br>`keyword_init: true` を使うことで、シニアエンジニアが好む「自己記述的で安全なコード」になります。</p>
+                <div class="answer-label">正解: A</div>
+                <hr style="border-top: 1px solid #b6d4fe; margin: 10px 0;">
+                <div style="color: #333;">
+                    正解は A です。<br><br>属性が多いデータ構造では、位置引数 (`10, 20, 30...`) だと順番を間違えるリスクがあります。<br>`keyword_init: true` を使うことで、シニアエンジニアが好む「自己記述的で安全なコード」になります。
+                </div>
             </div>
         </div>
         
     </main>
 
-    <footer>
-        <p>Generated by Gemini CLI for Polished Ruby Programming</p>
-    </footer>
+    <script>
+        function checkAnswer(questionIndex, selectedOption) {
+            const card = document.getElementById('q-' + questionIndex);
+            const correctAnswer = card.getAttribute('data-answer');
+            const answerSection = document.getElementById('ans-' + questionIndex);
+            const buttons = card.querySelectorAll('.option-btn');
+
+            // Disable all buttons to prevent multiple guesses (optional)
+            buttons.forEach(btn => {
+                btn.disabled = true;
+                const optionText = btn.textContent;
+                // Check if this button corresponds to A, B, or C
+                const optionChar = optionText.trim().charAt(0);
+                
+                if (optionChar === correctAnswer) {
+                    btn.classList.add('correct');
+                    // Add checkmark
+                    btn.innerHTML += ' ✅';
+                } else if (optionChar === selectedOption && selectedOption !== correctAnswer) {
+                    btn.classList.add('incorrect');
+                    btn.innerHTML += ' ❌';
+                }
+            });
+
+            // Show explanation
+            answerSection.style.display = 'block';
+        }
+    </script>
 </body>
 </html>

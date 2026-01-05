@@ -4,35 +4,104 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>第1章 1.4 クイズ: Advanced Symbols & Strings</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
     <style>
-        .question-card {
-            border: 1px solid #ddd;
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
             padding: 20px;
-            margin-bottom: 20px;
+            background-color: #f9f9f9;
+        }
+        header {
+            margin-bottom: 40px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 20px;
+        }
+        h1 { margin: 0; color: #2c3e50; }
+        a { color: #3498db; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+
+        .question-card {
+            background: white;
+            border: 1px solid #e0e0e0;
+            padding: 25px;
+            margin-bottom: 30px;
             border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
+        h3 { margin-top: 0; color: #2c3e50; }
+        
+        .requirement {
+            background-color: #f8f9fa;
+            border-left: 4px solid #3498db;
+            padding: 10px 15px;
+            margin: 15px 0;
+            font-size: 0.95em;
+        }
+
+        pre {
+            background-color: #2d3436;
+            color: #dfe6e9;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-family: Consolas, Monaco, "Andale Mono", monospace;
+        }
+
         .options {
-            list-style: none;
-            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 20px;
         }
-        .options li {
-            margin: 10px 0;
+        .option-btn {
+            text-align: left;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.2s;
+            color: #333;
         }
+        .option-btn:hover {
+            background-color: #f1f2f6;
+            border-color: #bdc3c7;
+        }
+        
+        /* Interactive States */
+        .option-btn.correct {
+            background-color: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+            font-weight: bold;
+        }
+        .option-btn.incorrect {
+            background-color: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+            opacity: 0.7;
+        }
+        .option-btn:disabled {
+            cursor: default;
+        }
+
         .answer-section {
             display: none;
-            margin-top: 15px;
-            padding: 15px;
-            background-color: #f0f8ff;
-            border-radius: 5px;
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #e8f4fd;
+            border: 1px solid #b6d4fe;
+            border-radius: 6px;
         }
-        .toggle-btn {
-            margin-top: 10px;
-        }
-        pre {
-            background-color: #f4f4f4;
-            padding: 10px;
-            overflow-x: auto;
+        .answer-label {
+            font-weight: bold;
+            color: #004085;
+            font-size: 1.1em;
+            margin-bottom: 10px;
         }
     </style>
 </head>
@@ -44,39 +113,43 @@
 
     <main>
         
-        <div class="question-card">
+        <div class="question-card" id="q-0" data-answer="B">
             <h3>Q1. ケース1: 外部入力とシンボル化 (Symbol DoS)</h3>
             
             
-            <p><strong>要件:</strong><br>Web APIのエンドポイントで、JSONのキーをシンボルに変換して扱いたい。<br>`JSON.parse(payload, symbolize_names: true)` を使用している。</p>
+            <div class="requirement">
+                <strong>要件:</strong><br>Web APIのエンドポイントで、JSONのキーをシンボルに変換して扱いたい。<br>`JSON.parse(payload, symbolize_names: true)` を使用している。
+            </div>
             
             
             
 
             <p>このコードがセキュリティレビューで『修正必須（Critical）』と判断される理由は？</p>
 
-            <ul class="options">
-                <li><strong>A:</strong> シンボルの生成は文字列より遅いため、レイテンシが悪化する</li>
-                <li><strong>B:</strong> 攻撃者がランダムなキーを持つJSONを大量に送信することで、メモリを枯渇させられる (DoS)</li>
+            <div class="options">
+                <button class="option-btn" onclick="checkAnswer(0, 'A')">A: シンボルの生成は文字列より遅いため、レイテンシが悪化する</button>
+                <button class="option-btn" onclick="checkAnswer(0, 'B')">B: 攻撃者がランダムなキーを持つJSONを大量に送信することで、メモリを枯渇させられる (DoS)</button>
                 
-                <li><strong>C:</strong> Ruby 3.0以降ではシンボルは即座にGCされるため、実は問題ない</li>
+                <button class="option-btn" onclick="checkAnswer(0, 'C')">C: Ruby 3.0以降ではシンボルは即座にGCされるため、実は問題ない</button>
                 
-            </ul>
-
-            <button class="toggle-btn" onclick="document.getElementById('ans-0').style.display = 'block'">答えを見る</button>
+            </div>
 
             <div id="ans-0" class="answer-section">
-                <p><strong>正解: B</strong></p>
-                <hr>
-                <p>正解は B です。<br><br>Ruby 2.2以降、動的に生成された一部のシンボルはGCされますが、それでも文字列に比べてコストが高く、回収のタイミングも異なります。<br>外部からの任意の入力を無制限にシンボル化することは、依然として **Symbol DoS** 脆弱性につながります。<br>Railsの `params` が `HashWithIndifferentAccess` を使い、内部で文字列としてキーを保持するのはこのためです。</p>
+                <div class="answer-label">正解: B</div>
+                <hr style="border-top: 1px solid #b6d4fe; margin: 10px 0;">
+                <div style="color: #333;">
+                    正解は B です。<br><br>Ruby 2.2以降、動的に生成された一部のシンボルはGCされますが、それでも文字列に比べてコストが高く、回収のタイミングも異なります。<br>外部からの任意の入力を無制限にシンボル化することは、依然として **Symbol DoS** 脆弱性につながります。<br>Railsの `params` が `HashWithIndifferentAccess` を使い、内部で文字列としてキーを保持するのはこのためです。
+                </div>
             </div>
         </div>
         
-        <div class="question-card">
+        <div class="question-card" id="q-1" data-answer="A">
             <h3>Q2. ケース2: フリーズされた文字列 (Frozen String Literal)</h3>
             
             
-            <p><strong>要件:</strong><br>ファイルの先頭に `# frozen_string_literal: true` を書いた。</p>
+            <div class="requirement">
+                <strong>要件:</strong><br>ファイルの先頭に `# frozen_string_literal: true` を書いた。
+            </div>
             
             
             
@@ -85,26 +158,28 @@
 
             <p>このコードの出力は？</p>
 
-            <ul class="options">
-                <li><strong>A:</strong> true (同じオブジェクトID)</li>
-                <li><strong>B:</strong> false (異なるオブジェクトID)</li>
+            <div class="options">
+                <button class="option-btn" onclick="checkAnswer(1, 'A')">A: true (同じオブジェクトID)</button>
+                <button class="option-btn" onclick="checkAnswer(1, 'B')">B: false (異なるオブジェクトID)</button>
                 
-            </ul>
-
-            <button class="toggle-btn" onclick="document.getElementById('ans-1').style.display = 'block'">答えを見る</button>
+            </div>
 
             <div id="ans-1" class="answer-section">
-                <p><strong>正解: A</strong></p>
-                <hr>
-                <p>正解は A です。<br><br>`frozen_string_literal: true` が有効な環境では、ソースコード中の文字列リテラルは自動的に freeze され、同じ内容のリテラルは **同一のオブジェクトインスタンス** を共有します（Intern化）。<br>これにより、メモリ使用量が劇的に削減されます。</p>
+                <div class="answer-label">正解: A</div>
+                <hr style="border-top: 1px solid #b6d4fe; margin: 10px 0;">
+                <div style="color: #333;">
+                    正解は A です。<br><br>`frozen_string_literal: true` が有効な環境では、ソースコード中の文字列リテラルは自動的に freeze され、同じ内容のリテラルは **同一のオブジェクトインスタンス** を共有します（Intern化）。<br>これにより、メモリ使用量が劇的に削減されます。
+                </div>
             </div>
         </div>
         
-        <div class="question-card">
+        <div class="question-card" id="q-2" data-answer="B">
             <h3>Q3. ケース3: 文字列の重複排除 (String Deduplication)</h3>
             
             
-            <p><strong>要件:</strong><br>CSVファイルから大量のデータを読み込む。'status' カラムには 'active', 'inactive' などの値が入るが、これらはリテラルではなくファイルから読み込んだ動的な文字列である。</p>
+            <div class="requirement">
+                <strong>要件:</strong><br>CSVファイルから大量のデータを読み込む。'status' カラムには 'active', 'inactive' などの値が入るが、これらはリテラルではなくファイルから読み込んだ動的な文字列である。
+            </div>
             
             
             
@@ -113,55 +188,82 @@
 
             <p>これらをシンボル化せずに、かつメモリ効率よく（同じオブジェクトとして）扱いたい。Ruby 2.5以降で使えるテクニックは？</p>
 
-            <ul class="options">
-                <li><strong>A:</strong> status1.freeze</li>
-                <li><strong>B:</strong> -status1 (単項マイナス演算子)</li>
+            <div class="options">
+                <button class="option-btn" onclick="checkAnswer(2, 'A')">A: status1.freeze</button>
+                <button class="option-btn" onclick="checkAnswer(2, 'B')">B: -status1 (単項マイナス演算子)</button>
                 
-                <li><strong>C:</strong> status1.dedup</li>
+                <button class="option-btn" onclick="checkAnswer(2, 'C')">C: status1.dedup</button>
                 
-            </ul>
-
-            <button class="toggle-btn" onclick="document.getElementById('ans-2').style.display = 'block'">答えを見る</button>
+            </div>
 
             <div id="ans-2" class="answer-section">
-                <p><strong>正解: B</strong></p>
-                <hr>
-                <p>正解は B です。<br><br>Ruby 2.5で導入された `String#-@` (単項マイナス) は、文字列の内容が既にインタプリタ内部のプールに存在すればそのオブジェクトを返し、なければ freeze して登録します。<br>これを **String Deduplication** と呼びます。<br>`freeze` は単にオブジェクトを変更不可にするだけで、重複排除（メモリ共有）までは保証しません（VMの実装依存ですが、明示的な `-@` が確実です）。</p>
+                <div class="answer-label">正解: B</div>
+                <hr style="border-top: 1px solid #b6d4fe; margin: 10px 0;">
+                <div style="color: #333;">
+                    正解は B です。<br><br>Ruby 2.5で導入された `String#-@` (単項マイナス) は、文字列の内容が既にインタプリタ内部のプールに存在すればそのオブジェクトを返し、なければ freeze して登録します。<br>これを **String Deduplication** と呼びます。<br>`freeze` は単にオブジェクトを変更不可にするだけで、重複排除（メモリ共有）までは保証しません（VMの実装依存ですが、明示的な `-@` が確実です）。
+                </div>
             </div>
         </div>
         
-        <div class="question-card">
+        <div class="question-card" id="q-3" data-answer="C">
             <h3>Q4. ケース4: ハッシュのキー検索速度</h3>
             
             
-            <p><strong>要件:</strong><br>巨大なハッシュ（100万エントリ）がある。キーはすべて短い文字列（5文字程度）。</p>
+            <div class="requirement">
+                <strong>要件:</strong><br>巨大なハッシュ（100万エントリ）がある。キーはすべて短い文字列（5文字程度）。
+            </div>
             
             
             
 
             <p>検索速度 `hash['key']` (Stringキー) と `hash[:key]` (Symbolキー) の比較として正しいのは？</p>
 
-            <ul class="options">
-                <li><strong>A:</strong> Symbolキーの方が圧倒的に速い（整数比較のため）</li>
-                <li><strong>B:</strong> Stringキーの方が速い</li>
+            <div class="options">
+                <button class="option-btn" onclick="checkAnswer(3, 'A')">A: Symbolキーの方が圧倒的に速い（整数比較のため）</button>
+                <button class="option-btn" onclick="checkAnswer(3, 'B')">B: Stringキーの方が速い</button>
                 
-                <li><strong>C:</strong> 最近のRuby (2.2+) では、短い文字列であれば有意な差はない</li>
+                <button class="option-btn" onclick="checkAnswer(3, 'C')">C: 最近のRuby (2.2+) では、短い文字列であれば有意な差はない</button>
                 
-            </ul>
-
-            <button class="toggle-btn" onclick="document.getElementById('ans-3').style.display = 'block'">答えを見る</button>
+            </div>
 
             <div id="ans-3" class="answer-section">
-                <p><strong>正解: C</strong></p>
-                <hr>
-                <p>正解は C です（Aを選んだ人も部分点）。<br><br>伝統的には「シンボルは整数ID比較だから速い」と言われてきましたが、近年のRubyでは文字列ハッシュの最適化（MurmurHashなど）が進んでおり、特に短い文字列ではベンチマーク上の差は無視できるレベルに縮まっています。<br>したがって、「速度のためだけに」無理してシンボルを使う必要性は薄れています（メモリ効率の観点の方が重要です）。</p>
+                <div class="answer-label">正解: C</div>
+                <hr style="border-top: 1px solid #b6d4fe; margin: 10px 0;">
+                <div style="color: #333;">
+                    正解は C です（Aを選んだ人も部分点）。<br><br>伝統的には「シンボルは整数ID比較だから速い」と言われてきましたが、近年のRubyでは文字列ハッシュの最適化（MurmurHashなど）が進んでおり、特に短い文字列ではベンチマーク上の差は無視できるレベルに縮まっています。<br>したがって、「速度のためだけに」無理してシンボルを使う必要性は薄れています（メモリ効率の観点の方が重要です）。
+                </div>
             </div>
         </div>
         
     </main>
 
-    <footer>
-        <p>Generated by Gemini CLI for Polished Ruby Programming</p>
-    </footer>
+    <script>
+        function checkAnswer(questionIndex, selectedOption) {
+            const card = document.getElementById('q-' + questionIndex);
+            const correctAnswer = card.getAttribute('data-answer');
+            const answerSection = document.getElementById('ans-' + questionIndex);
+            const buttons = card.querySelectorAll('.option-btn');
+
+            // Disable all buttons to prevent multiple guesses (optional)
+            buttons.forEach(btn => {
+                btn.disabled = true;
+                const optionText = btn.textContent;
+                // Check if this button corresponds to A, B, or C
+                const optionChar = optionText.trim().charAt(0);
+                
+                if (optionChar === correctAnswer) {
+                    btn.classList.add('correct');
+                    // Add checkmark
+                    btn.innerHTML += ' ✅';
+                } else if (optionChar === selectedOption && selectedOption !== correctAnswer) {
+                    btn.classList.add('incorrect');
+                    btn.innerHTML += ' ❌';
+                }
+            });
+
+            // Show explanation
+            answerSection.style.display = 'block';
+        }
+    </script>
 </body>
 </html>

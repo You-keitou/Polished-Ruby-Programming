@@ -4,35 +4,104 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>第1章 1.3 クイズ: Numeric Types</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
     <style>
-        .question-card {
-            border: 1px solid #ddd;
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
             padding: 20px;
-            margin-bottom: 20px;
+            background-color: #f9f9f9;
+        }
+        header {
+            margin-bottom: 40px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 20px;
+        }
+        h1 { margin: 0; color: #2c3e50; }
+        a { color: #3498db; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+
+        .question-card {
+            background: white;
+            border: 1px solid #e0e0e0;
+            padding: 25px;
+            margin-bottom: 30px;
             border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
+        h3 { margin-top: 0; color: #2c3e50; }
+        
+        .requirement {
+            background-color: #f8f9fa;
+            border-left: 4px solid #3498db;
+            padding: 10px 15px;
+            margin: 15px 0;
+            font-size: 0.95em;
+        }
+
+        pre {
+            background-color: #2d3436;
+            color: #dfe6e9;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-family: Consolas, Monaco, "Andale Mono", monospace;
+        }
+
         .options {
-            list-style: none;
-            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 20px;
         }
-        .options li {
-            margin: 10px 0;
+        .option-btn {
+            text-align: left;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.2s;
+            color: #333;
         }
+        .option-btn:hover {
+            background-color: #f1f2f6;
+            border-color: #bdc3c7;
+        }
+        
+        /* Interactive States */
+        .option-btn.correct {
+            background-color: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+            font-weight: bold;
+        }
+        .option-btn.incorrect {
+            background-color: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+            opacity: 0.7;
+        }
+        .option-btn:disabled {
+            cursor: default;
+        }
+
         .answer-section {
             display: none;
-            margin-top: 15px;
-            padding: 15px;
-            background-color: #f0f8ff;
-            border-radius: 5px;
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #e8f4fd;
+            border: 1px solid #b6d4fe;
+            border-radius: 6px;
         }
-        .toggle-btn {
-            margin-top: 10px;
-        }
-        pre {
-            background-color: #f4f4f4;
-            padding: 10px;
-            overflow-x: auto;
+        .answer-label {
+            font-weight: bold;
+            color: #004085;
+            font-size: 1.1em;
+            margin-bottom: 10px;
         }
     </style>
 </head>
@@ -44,11 +113,13 @@
 
     <main>
         
-        <div class="question-card">
+        <div class="question-card" id="q-0" data-answer="B">
             <h3>Q1. ケース1: 消費税の計算</h3>
             
             
-            <p><strong>要件:</strong><br>100円の商品の10%の消費税を計算し、合計金額を出したい。<br>正確性が何よりも重要です。</p>
+            <div class="requirement">
+                <strong>要件:</strong><br>100円の商品の10%の消費税を計算し、合計金額を出したい。<br>正確性が何よりも重要です。
+            </div>
             
             
             
@@ -57,28 +128,30 @@
 
             <p>この計算で `1.1` (Float) を使う際のリスクは？</p>
 
-            <ul class="options">
-                <li><strong>A:</strong> 全く問題ない</li>
-                <li><strong>B:</strong> 浮動小数点の誤差により、計算結果が 110.00000000000001 のようになる可能性がある</li>
+            <div class="options">
+                <button class="option-btn" onclick="checkAnswer(0, 'A')">A: 全く問題ない</button>
+                <button class="option-btn" onclick="checkAnswer(0, 'B')">B: 浮動小数点の誤差により、計算結果が 110.00000000000001 のようになる可能性がある</button>
                 
-                <li><strong>C:</strong> 処理速度が遅すぎる</li>
+                <button class="option-btn" onclick="checkAnswer(0, 'C')">C: 処理速度が遅すぎる</button>
                 
-            </ul>
-
-            <button class="toggle-btn" onclick="document.getElementById('ans-0').style.display = 'block'">答えを見る</button>
+            </div>
 
             <div id="ans-0" class="answer-section">
-                <p><strong>正解: B</strong></p>
-                <hr>
-                <p>正解は B です。<br><br>Float（浮動小数点）は2進数で計算するため、10進数の 0.1 などを正確に表現できません。<br>お金の計算に Float を使うのは厳禁です。Rubyでは `BigDecimal` を使うのが正解です。</p>
+                <div class="answer-label">正解: B</div>
+                <hr style="border-top: 1px solid #b6d4fe; margin: 10px 0;">
+                <div style="color: #333;">
+                    正解は B です。<br><br>Float（浮動小数点）は2進数で計算するため、10進数の 0.1 などを正確に表現できません。<br>お金の計算に Float を使うのは厳禁です。Rubyでは `BigDecimal` を使うのが正解です。
+                </div>
             </div>
         </div>
         
-        <div class="question-card">
+        <div class="question-card" id="q-1" data-answer="A">
             <h3>Q2. ケース2: 巨大な整数の計算</h3>
             
             
-            <p><strong>要件:</strong><br>宇宙の星の数のような、64bit整数（2^64）を超える非常に大きな数値を扱いたい。</p>
+            <div class="requirement">
+                <strong>要件:</strong><br>宇宙の星の数のような、64bit整数（2^64）を超える非常に大きな数値を扱いたい。
+            </div>
             
             
             
@@ -87,24 +160,24 @@
 
             <p>Rubyでこの数値を扱うために必要な特別なクラスや設定は？</p>
 
-            <ul class="options">
-                <li><strong>A:</strong> 何も必要ない（Integerクラスが自動で多倍長整数として扱う）</li>
-                <li><strong>B:</strong> BigInt クラスを require する必要がある</li>
+            <div class="options">
+                <button class="option-btn" onclick="checkAnswer(1, 'A')">A: 何も必要ない（Integerクラスが自動で多倍長整数として扱う）</button>
+                <button class="option-btn" onclick="checkAnswer(1, 'B')">B: BigInt クラスを require する必要がある</button>
                 
-                <li><strong>C:</strong> Rubyでは 64bit を超える数値は扱えない</li>
+                <button class="option-btn" onclick="checkAnswer(1, 'C')">C: Rubyでは 64bit を超える数値は扱えない</button>
                 
-            </ul>
-
-            <button class="toggle-btn" onclick="document.getElementById('ans-1').style.display = 'block'">答えを見る</button>
+            </div>
 
             <div id="ans-1" class="answer-section">
-                <p><strong>正解: A</strong></p>
-                <hr>
-                <p>正解は A です。<br><br>Rubyの `Integer` は、数値の大きさに応じて自動的にメモリを割り当てる「多倍長整数」です。<br>昔のRubyには Fixnum と Bignum がありましたが、現在は `Integer` に統合され、ユーザーはサイズを気にせず計算できます。</p>
+                <div class="answer-label">正解: A</div>
+                <hr style="border-top: 1px solid #b6d4fe; margin: 10px 0;">
+                <div style="color: #333;">
+                    正解は A です。<br><br>Rubyの `Integer` は、数値の大きさに応じて自動的にメモリを割り当てる「多倍長整数」です。<br>昔のRubyには Fixnum と Bignum がありましたが、現在は `Integer` に統合され、ユーザーはサイズを気にせず計算できます。
+                </div>
             </div>
         </div>
         
-        <div class="question-card">
+        <div class="question-card" id="q-2" data-answer="B">
             <h3>Q3. ケース3: 比較の罠</h3>
             
             
@@ -115,53 +188,80 @@
 
             <p>このコードの出力結果はどうなる？</p>
 
-            <ul class="options">
-                <li><strong>A:</strong> true</li>
-                <li><strong>B:</strong> false</li>
+            <div class="options">
+                <button class="option-btn" onclick="checkAnswer(2, 'A')">A: true</button>
+                <button class="option-btn" onclick="checkAnswer(2, 'B')">B: false</button>
                 
-            </ul>
-
-            <button class="toggle-btn" onclick="document.getElementById('ans-2').style.display = 'block'">答えを見る</button>
+            </div>
 
             <div id="ans-2" class="answer-section">
-                <p><strong>正解: B</strong></p>
-                <hr>
-                <p>正解は B (false) です。<br><br>実際に実行すると `0.1 + 0.2` は `0.30000000000000004` になります。<br>Float 同士を `==` で比較するのは非常に危険です。</p>
+                <div class="answer-label">正解: B</div>
+                <hr style="border-top: 1px solid #b6d4fe; margin: 10px 0;">
+                <div style="color: #333;">
+                    正解は B (false) です。<br><br>実際に実行すると `0.1 + 0.2` は `0.30000000000000004` になります。<br>Float 同士を `==` で比較するのは非常に危険です。
+                </div>
             </div>
         </div>
         
-        <div class="question-card">
+        <div class="question-card" id="q-3" data-answer="C">
             <h3>Q4. ケース4: 速度と精度のトレードオフ</h3>
             
             
-            <p><strong>要件:</strong><br>3Dゲームの座標計算や、物理シミュレーションで1秒間に何万回も計算を行いたい。<br>わずかな誤差は許容できるが、計算速度が極めて重要。</p>
+            <div class="requirement">
+                <strong>要件:</strong><br>3Dゲームの座標計算や、物理シミュレーションで1秒間に何万回も計算を行いたい。<br>わずかな誤差は許容できるが、計算速度が極めて重要。
+            </div>
             
             
             
 
             <p>どの型を使うべき？</p>
 
-            <ul class="options">
-                <li><strong>A:</strong> BigDecimal</li>
-                <li><strong>B:</strong> Rational (有理数)</li>
+            <div class="options">
+                <button class="option-btn" onclick="checkAnswer(3, 'A')">A: BigDecimal</button>
+                <button class="option-btn" onclick="checkAnswer(3, 'B')">B: Rational (有理数)</button>
                 
-                <li><strong>C:</strong> Float</li>
+                <button class="option-btn" onclick="checkAnswer(3, 'C')">C: Float</button>
                 
-            </ul>
-
-            <button class="toggle-btn" onclick="document.getElementById('ans-3').style.display = 'block'">答えを見る</button>
+            </div>
 
             <div id="ans-3" class="answer-section">
-                <p><strong>正解: C</strong></p>
-                <hr>
-                <p>正解は C (Float) です。<br><br>`BigDecimal` は正確ですが、ソフトウェアで計算するため低速です。<br>一方、`Float` はCPUの浮動小数点演算ユニット(FPU)で直接処理されるため、圧倒的に高速です。<br>「絶対的な正確さ」か「速度」か、用途に応じた使い分けがプロの仕事です。</p>
+                <div class="answer-label">正解: C</div>
+                <hr style="border-top: 1px solid #b6d4fe; margin: 10px 0;">
+                <div style="color: #333;">
+                    正解は C (Float) です。<br><br>`BigDecimal` は正確ですが、ソフトウェアで計算するため低速です。<br>一方、`Float` はCPUの浮動小数点演算ユニット(FPU)で直接処理されるため、圧倒的に高速です。<br>「絶対的な正確さ」か「速度」か、用途に応じた使い分けがプロの仕事です。
+                </div>
             </div>
         </div>
         
     </main>
 
-    <footer>
-        <p>Generated by Gemini CLI for Polished Ruby Programming</p>
-    </footer>
+    <script>
+        function checkAnswer(questionIndex, selectedOption) {
+            const card = document.getElementById('q-' + questionIndex);
+            const correctAnswer = card.getAttribute('data-answer');
+            const answerSection = document.getElementById('ans-' + questionIndex);
+            const buttons = card.querySelectorAll('.option-btn');
+
+            // Disable all buttons to prevent multiple guesses (optional)
+            buttons.forEach(btn => {
+                btn.disabled = true;
+                const optionText = btn.textContent;
+                // Check if this button corresponds to A, B, or C
+                const optionChar = optionText.trim().charAt(0);
+                
+                if (optionChar === correctAnswer) {
+                    btn.classList.add('correct');
+                    // Add checkmark
+                    btn.innerHTML += ' ✅';
+                } else if (optionChar === selectedOption && selectedOption !== correctAnswer) {
+                    btn.classList.add('incorrect');
+                    btn.innerHTML += ' ❌';
+                }
+            });
+
+            // Show explanation
+            answerSection.style.display = 'block';
+        }
+    </script>
 </body>
 </html>

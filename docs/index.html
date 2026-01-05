@@ -4,40 +4,122 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Polished Ruby Programming Quizzes</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 40px 0;
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        h1 { margin: 0; font-size: 2.5em; }
+        .card-list {
+            list-style: none;
+            padding: 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 1px solid #e0e0e0;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .card a {
+            display: block;
+            padding: 20px;
+            text-decoration: none;
+            color: #2c3e50;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+        .chapter-title {
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 10px;
+            margin-top: 40px;
+            color: #555;
+        }
+    </style>
 </head>
 <body>
     <header>
-        <h1>💎 Polished Ruby Programming Quizzes</h1>
-        <p>研鑽Rubyプログラミング 学習記録・復習用クイズ集</p>
+        <h1>💎 Polished Ruby Programming</h1>
+        <p>Interactive Quiz Collection</p>
     </header>
 
     <main>
-        <h2>Chapter 1: 組み込みクラスを最大限に活用する</h2>
-        <ul>
+        <h2 class="chapter-title">Chapter 1: 組み込みクラスを最大限に活用する</h2>
+        <ul class="card-list">
             
-            <li>
-                <a href="quizzes/quiz1_1.html">第1章 1.1 クイズ: Core vs Custom</a>
+            <li class="card">
+                <a href="quizzes/quiz1_1.html">
+                    第1章 1.1 クイズ: Core vs Custom
+                    <div style="font-weight: normal; font-size: 0.9em; color: #7f8c8d; margin-top: 5px;">
+                        Click to start quiz →
+                    </div>
+                </a>
             </li>
             
-            <li>
-                <a href="quizzes/quiz1_2.html">第1章 1.2 クイズ: True, False, and Nil</a>
+            <li class="card">
+                <a href="quizzes/quiz1_2.html">
+                    第1章 1.2 クイズ: True, False, and Nil
+                    <div style="font-weight: normal; font-size: 0.9em; color: #7f8c8d; margin-top: 5px;">
+                        Click to start quiz →
+                    </div>
+                </a>
             </li>
             
-            <li>
-                <a href="quizzes/quiz1_3.html">第1章 1.3 クイズ: Numeric Types</a>
+            <li class="card">
+                <a href="quizzes/quiz1_3.html">
+                    第1章 1.3 クイズ: Numeric Types
+                    <div style="font-weight: normal; font-size: 0.9em; color: #7f8c8d; margin-top: 5px;">
+                        Click to start quiz →
+                    </div>
+                </a>
             </li>
             
-            <li>
-                <a href="quizzes/quiz1_4.html">第1章 1.4 クイズ: Advanced Symbols & Strings</a>
+            <li class="card">
+                <a href="quizzes/quiz1_4.html">
+                    第1章 1.4 クイズ: Advanced Symbols & Strings
+                    <div style="font-weight: normal; font-size: 0.9em; color: #7f8c8d; margin-top: 5px;">
+                        Click to start quiz →
+                    </div>
+                </a>
             </li>
             
-            <li>
-                <a href="quizzes/quiz1_5.html">第1章 1.5 クイズ: Expert Collections</a>
+            <li class="card">
+                <a href="quizzes/quiz1_5.html">
+                    第1章 1.5 クイズ: Expert Collections
+                    <div style="font-weight: normal; font-size: 0.9em; color: #7f8c8d; margin-top: 5px;">
+                        Click to start quiz →
+                    </div>
+                </a>
             </li>
             
-            <li>
-                <a href="quizzes/quiz1_6.html">第1章 1.6 クイズ: The Power of Struct & Data</a>
+            <li class="card">
+                <a href="quizzes/quiz1_6.html">
+                    第1章 1.6 クイズ: The Power of Struct & Data
+                    <div style="font-weight: normal; font-size: 0.9em; color: #7f8c8d; margin-top: 5px;">
+                        Click to start quiz →
+                    </div>
+                </a>
             </li>
             
         </ul>

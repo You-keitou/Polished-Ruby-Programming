@@ -4,35 +4,104 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>第1章 1.1 クイズ: Core vs Custom</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
     <style>
-        .question-card {
-            border: 1px solid #ddd;
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
             padding: 20px;
-            margin-bottom: 20px;
+            background-color: #f9f9f9;
+        }
+        header {
+            margin-bottom: 40px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 20px;
+        }
+        h1 { margin: 0; color: #2c3e50; }
+        a { color: #3498db; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+
+        .question-card {
+            background: white;
+            border: 1px solid #e0e0e0;
+            padding: 25px;
+            margin-bottom: 30px;
             border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
+        h3 { margin-top: 0; color: #2c3e50; }
+        
+        .requirement {
+            background-color: #f8f9fa;
+            border-left: 4px solid #3498db;
+            padding: 10px 15px;
+            margin: 15px 0;
+            font-size: 0.95em;
+        }
+
+        pre {
+            background-color: #2d3436;
+            color: #dfe6e9;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-family: Consolas, Monaco, "Andale Mono", monospace;
+        }
+
         .options {
-            list-style: none;
-            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 20px;
         }
-        .options li {
-            margin: 10px 0;
+        .option-btn {
+            text-align: left;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.2s;
+            color: #333;
         }
+        .option-btn:hover {
+            background-color: #f1f2f6;
+            border-color: #bdc3c7;
+        }
+        
+        /* Interactive States */
+        .option-btn.correct {
+            background-color: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+            font-weight: bold;
+        }
+        .option-btn.incorrect {
+            background-color: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+            opacity: 0.7;
+        }
+        .option-btn:disabled {
+            cursor: default;
+        }
+
         .answer-section {
             display: none;
-            margin-top: 15px;
-            padding: 15px;
-            background-color: #f0f8ff;
-            border-radius: 5px;
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #e8f4fd;
+            border: 1px solid #b6d4fe;
+            border-radius: 6px;
         }
-        .toggle-btn {
-            margin-top: 10px;
-        }
-        pre {
-            background-color: #f4f4f4;
-            padding: 10px;
-            overflow-x: auto;
+        .answer-label {
+            font-weight: bold;
+            color: #004085;
+            font-size: 1.1em;
+            margin-bottom: 10px;
         }
     </style>
 </head>
@@ -44,116 +113,149 @@
 
     <main>
         
-        <div class="question-card">
+        <div class="question-card" id="q-0" data-answer="A">
             <h3>Q1. ケース1: HTTPリクエストの環境変数 (例: Rack)</h3>
             
             
-            <p><strong>要件:</strong><br>Webサーバーから受け取ったリクエスト情報（ヘッダー、パス、メソッドなど）を、アプリケーションの各ミドルウェアに渡す必要があります。このデータは単なる情報の「入れ物」であり、特定の振る舞い（メソッド）は持ちません。また、ミドルウェアが自由に値を書き換えることが許容されます。</p>
+            <div class="requirement">
+                <strong>要件:</strong><br>Webサーバーから受け取ったリクエスト情報（ヘッダー、パス、メソッドなど）を、アプリケーションの各ミドルウェアに渡す必要があります。このデータは単なる情報の「入れ物」であり、特定の振る舞い（メソッド）は持ちません。また、ミドルウェアが自由に値を書き換えることが許容されます。
+            </div>
             
             
             
 
             <p></p>
 
-            <ul class="options">
-                <li><strong>A:</strong> 組み込みクラス (Hash)</li>
-                <li><strong>B:</strong> 独自クラス (RequestEnv)</li>
+            <div class="options">
+                <button class="option-btn" onclick="checkAnswer(0, 'A')">A: 組み込みクラス (Hash)</button>
+                <button class="option-btn" onclick="checkAnswer(0, 'B')">B: 独自クラス (RequestEnv)</button>
                 
-            </ul>
-
-            <button class="toggle-btn" onclick="document.getElementById('ans-0').style.display = 'block'">答えを見る</button>
+            </div>
 
             <div id="ans-0" class="answer-section">
-                <p><strong>正解: A</strong></p>
-                <hr>
-                <p>正解は A (Hash) です。\n\nRubyのWebサーバーインターフェースである 'Rack' では、環境変数を単なる `Hash` として扱います。\nデータが「単なる入れ物」であり、特定のドメインロジックを持たず、柔軟性が求められる場合（キーが動的に増えるなど）は、Hashが適しています。\nただし、Railsの `ActionDispatch::Request` のように、便利なメソッドを提供したい段階になると、このHashをラップした独自クラスが登場します。</p>
+                <div class="answer-label">正解: A</div>
+                <hr style="border-top: 1px solid #b6d4fe; margin: 10px 0;">
+                <div style="color: #333;">
+                    正解は A (Hash) です。\n\nRubyのWebサーバーインターフェースである 'Rack' では、環境変数を単なる `Hash` として扱います。\nデータが「単なる入れ物」であり、特定のドメインロジックを持たず、柔軟性が求められる場合（キーが動的に増えるなど）は、Hashが適しています。\nただし、Railsの `ActionDispatch::Request` のように、便利なメソッドを提供したい段階になると、このHashをラップした独自クラスが登場します。
+                </div>
             </div>
         </div>
         
-        <div class="question-card">
+        <div class="question-card" id="q-1" data-answer="B">
             <h3>Q2. ケース2: 金額の計算 (例: Money gem)</h3>
             
             
-            <p><strong>要件:</strong><br>ECサイトで商品の価格を扱います。数値（金額）と通貨（JPY, USD）のペアです。\n異なる通貨同士の足し算（100 JPY + 1 USD）はエラーにするか、換算する必要があります。\nまた、'100' と表示する際は、通貨に応じて '¥100' や '$1.00' とフォーマットする必要があります。</p>
+            <div class="requirement">
+                <strong>要件:</strong><br>ECサイトで商品の価格を扱います。数値（金額）と通貨（JPY, USD）のペアです。\n異なる通貨同士の足し算（100 JPY + 1 USD）はエラーにするか、換算する必要があります。\nまた、'100' と表示する際は、通貨に応じて '¥100' や '$1.00' とフォーマットする必要があります。
+            </div>
             
             
             
 
             <p></p>
 
-            <ul class="options">
-                <li><strong>A:</strong> 組み込みクラス (HashやArray)</li>
-                <li><strong>B:</strong> 独自クラス (Money)</li>
+            <div class="options">
+                <button class="option-btn" onclick="checkAnswer(1, 'A')">A: 組み込みクラス (HashやArray)</button>
+                <button class="option-btn" onclick="checkAnswer(1, 'B')">B: 独自クラス (Money)</button>
                 
-            </ul>
-
-            <button class="toggle-btn" onclick="document.getElementById('ans-1').style.display = 'block'">答えを見る</button>
+            </div>
 
             <div id="ans-1" class="answer-section">
-                <p><strong>正解: B</strong></p>
-                <hr>
-                <p>"正解は B (独自クラス) です。</p>
+                <div class="answer-label">正解: B</div>
+                <hr style="border-top: 1px solid #b6d4fe; margin: 10px 0;">
+                <div style="color: #333;">
+                    "正解は B (独自クラス) です。\n\n`{ amount: 100
+                </div>
             </div>
         </div>
         
-        <div class="question-card">
+        <div class="question-card" id="q-2" data-answer="B">
             <h3>Q3. ケース3: 2点間の座標 (例: ゲームや地図)</h3>
             
             
-            <p><strong>要件:</strong><br>2Dマップ上の位置を示す X座標 と Y座標 を持ちます。\nこのデータは大量（数万個）に生成される可能性があります。\n特別な計算メソッドは今のところ必要ありませんが、xとyという属性名は明確にしたいです。</p>
+            <div class="requirement">
+                <strong>要件:</strong><br>2Dマップ上の位置を示す X座標 と Y座標 を持ちます。\nこのデータは大量（数万個）に生成される可能性があります。\n特別な計算メソッドは今のところ必要ありませんが、xとyという属性名は明確にしたいです。
+            </div>
             
             
             
 
             <p></p>
 
-            <ul class="options">
-                <li><strong>A:</strong> 組み込みクラス (Hash)</li>
-                <li><strong>B:</strong> Struct (または Data)</li>
+            <div class="options">
+                <button class="option-btn" onclick="checkAnswer(2, 'A')">A: 組み込みクラス (Hash)</button>
+                <button class="option-btn" onclick="checkAnswer(2, 'B')">B: Struct (または Data)</button>
                 
-                <li><strong>C:</strong> 完全な独自クラス</li>
+                <button class="option-btn" onclick="checkAnswer(2, 'C')">C: 完全な独自クラス</button>
                 
-            </ul>
-
-            <button class="toggle-btn" onclick="document.getElementById('ans-2').style.display = 'block'">答えを見る</button>
+            </div>
 
             <div id="ans-2" class="answer-section">
-                <p><strong>正解: B</strong></p>
-                <hr>
-                <p>推奨される正解は B (Struct/Data) です。\n\n単なるデータのコンテナであれば Hash でも可能ですが、`point[:x]` よりも `point.x` と書ける方がタイプミスを防げます。\nまた、大量に生成する場合、`Struct` や Ruby 3.2以降の `Data` は、完全なクラス定義を書くよりも簡潔で、メモリ効率も良い場合があります（特に `Data`）。\n「名前付きのデータ構造」が欲しいだけのときは、Structが組み込みと独自クラスの良い中間地点です。</p>
+                <div class="answer-label">正解: B</div>
+                <hr style="border-top: 1px solid #b6d4fe; margin: 10px 0;">
+                <div style="color: #333;">
+                    推奨される正解は B (Struct/Data) です。\n\n単なるデータのコンテナであれば Hash でも可能ですが、`point[:x]` よりも `point.x` と書ける方がタイプミスを防げます。\nまた、大量に生成する場合、`Struct` や Ruby 3.2以降の `Data` は、完全なクラス定義を書くよりも簡潔で、メモリ効率も良い場合があります（特に `Data`）。\n「名前付きのデータ構造」が欲しいだけのときは、Structが組み込みと独自クラスの良い中間地点です。
+                </div>
             </div>
         </div>
         
-        <div class="question-card">
+        <div class="question-card" id="q-3" data-answer="A">
             <h3>Q4. ケース4: APIのレスポンス解析 (例: API Client)</h3>
             
             
-            <p><strong>要件:</strong><br>外部のJSON APIを叩いて、レスポンスを受け取りました。\nレスポンスのフィールドは頻繁に変更される可能性があり、クライアント側ですべてのフィールドを事前に把握してマッピングするのはコストが高いです。\nとりあえずデータの中身をログに出したり、特定のキーだけ参照できれば十分です。</p>
+            <div class="requirement">
+                <strong>要件:</strong><br>外部のJSON APIを叩いて、レスポンスを受け取りました。\nレスポンスのフィールドは頻繁に変更される可能性があり、クライアント側ですべてのフィールドを事前に把握してマッピングするのはコストが高いです。\nとりあえずデータの中身をログに出したり、特定のキーだけ参照できれば十分です。
+            </div>
             
             
             
 
             <p></p>
 
-            <ul class="options">
-                <li><strong>A:</strong> 組み込みクラス (Hash / JSON.parseの結果)</li>
-                <li><strong>B:</strong> 独自クラス (ResponseModel)</li>
+            <div class="options">
+                <button class="option-btn" onclick="checkAnswer(3, 'A')">A: 組み込みクラス (Hash / JSON.parseの結果)</button>
+                <button class="option-btn" onclick="checkAnswer(3, 'B')">B: 独自クラス (ResponseModel)</button>
                 
-            </ul>
-
-            <button class="toggle-btn" onclick="document.getElementById('ans-3').style.display = 'block'">答えを見る</button>
+            </div>
 
             <div id="ans-3" class="answer-section">
-                <p><strong>正解: A</strong></p>
-                <hr>
-                <p>正解は A (Hash) です。\n\n構造が不安定、あるいは未知のデータ構造を扱う場合、厳密な独自クラス（Struct含む）を定義すると、フィールドが増減するたびに修正が必要になり、メンテナンスコストが跳ね上がります。\nこのような「境界」のデータ処理や、一時的なデータ保持には、柔軟な Hash が最適です。</p>
+                <div class="answer-label">正解: A</div>
+                <hr style="border-top: 1px solid #b6d4fe; margin: 10px 0;">
+                <div style="color: #333;">
+                    正解は A (Hash) です。\n\n構造が不安定、あるいは未知のデータ構造を扱う場合、厳密な独自クラス（Struct含む）を定義すると、フィールドが増減するたびに修正が必要になり、メンテナンスコストが跳ね上がります。\nこのような「境界」のデータ処理や、一時的なデータ保持には、柔軟な Hash が最適です。
+                </div>
             </div>
         </div>
         
     </main>
 
-    <footer>
-        <p>Generated by Gemini CLI for Polished Ruby Programming</p>
-    </footer>
+    <script>
+        function checkAnswer(questionIndex, selectedOption) {
+            const card = document.getElementById('q-' + questionIndex);
+            const correctAnswer = card.getAttribute('data-answer');
+            const answerSection = document.getElementById('ans-' + questionIndex);
+            const buttons = card.querySelectorAll('.option-btn');
+
+            // Disable all buttons to prevent multiple guesses (optional)
+            buttons.forEach(btn => {
+                btn.disabled = true;
+                const optionText = btn.textContent;
+                // Check if this button corresponds to A, B, or C
+                const optionChar = optionText.trim().charAt(0);
+                
+                if (optionChar === correctAnswer) {
+                    btn.classList.add('correct');
+                    // Add checkmark
+                    btn.innerHTML += ' ✅';
+                } else if (optionChar === selectedOption && selectedOption !== correctAnswer) {
+                    btn.classList.add('incorrect');
+                    btn.innerHTML += ' ❌';
+                }
+            });
+
+            // Show explanation
+            answerSection.style.display = 'block';
+        }
+    </script>
 </body>
 </html>

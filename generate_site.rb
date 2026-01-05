@@ -13,7 +13,7 @@ class QuizDataExtractor
   def extract(file_path)
     content = File.read(file_path)
     
-    if content =~ /puts\s+"\\n=== (.+?) ===\\n"/
+    if content =~ /puts\s+\"\\n=== (.+?) ===\\n\"/
       @title = $1
     else
       @title = File.basename(file_path, ".rb").capitalize
@@ -23,7 +23,7 @@ class QuizDataExtractor
       array_content = $1
       array_content.scan(/\{.*?\}/m).each do |hash_str|
         question = {}
-        hash_str.scan(/(\w+):\s*(?:"(.*?)"|'(.*?)'|([^,}\\n]+))/m).each do |match|
+        hash_str.scan(/(\w+):\s*(?:"(.*?)"|'(.*?)'|([^,\}\n]+))/m).each do |match|
           key = match[0].to_sym
           value = match[1] || match[2] || match[3]
           value = value.gsub('"', '"').gsub("'", "'") if value
@@ -43,35 +43,104 @@ TEMPLATE = <<~HTML
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= title %></title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
     <style>
-        .question-card {
-            border: 1px solid #ddd;
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
             padding: 20px;
-            margin-bottom: 20px;
+            background-color: #f9f9f9;
+        }
+        header {
+            margin-bottom: 40px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 20px;
+        }
+        h1 { margin: 0; color: #2c3e50; }
+        a { color: #3498db; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+
+        .question-card {
+            background: white;
+            border: 1px solid #e0e0e0;
+            padding: 25px;
+            margin-bottom: 30px;
             border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
+        h3 { margin-top: 0; color: #2c3e50; }
+        
+        .requirement {
+            background-color: #f8f9fa;
+            border-left: 4px solid #3498db;
+            padding: 10px 15px;
+            margin: 15px 0;
+            font-size: 0.95em;
+        }
+
+        pre {
+            background-color: #2d3436;
+            color: #dfe6e9;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-family: Consolas, Monaco, "Andale Mono", monospace;
+        }
+
         .options {
-            list-style: none;
-            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 20px;
         }
-        .options li {
-            margin: 10px 0;
+        .option-btn {
+            text-align: left;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.2s;
+            color: #333;
         }
+        .option-btn:hover {
+            background-color: #f1f2f6;
+            border-color: #bdc3c7;
+        }
+        
+        /* Interactive States */
+        .option-btn.correct {
+            background-color: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+            font-weight: bold;
+        }
+        .option-btn.incorrect {
+            background-color: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+            opacity: 0.7;
+        }
+        .option-btn:disabled {
+            cursor: default;
+        }
+
         .answer-section {
             display: none;
-            margin-top: 15px;
-            padding: 15px;
-            background-color: #f0f8ff;
-            border-radius: 5px;
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #e8f4fd;
+            border: 1px solid #b6d4fe;
+            border-radius: 6px;
         }
-        .toggle-btn {
-            margin-top: 10px;
-        }
-        pre {
-            background-color: #f4f4f4;
-            padding: 10px;
-            overflow-x: auto;
+        .answer-label {
+            font-weight: bold;
+            color: #004085;
+            font-size: 1.1em;
+            margin-bottom: 10px;
         }
     </style>
 </head>
@@ -83,11 +152,13 @@ TEMPLATE = <<~HTML
 
     <main>
         <% questions.each_with_index do |q, i| %>
-        <div class="question-card">
+        <div class="question-card" id="q-<%= i %>" data-answer="<%= q[:answer] %>">
             <h3>Q<%= i + 1 %>. <%= q[:title] %></h3>
             
             <% if q[:requirement] && !q[:requirement].empty? %>
-            <p><strong>要件:</strong><br><%= q[:requirement].gsub(/\\n/, "<br>") %></p>
+            <div class="requirement">
+                <strong>要件:</strong><br><%= q[:requirement].gsub(/\\n/, "<br>") %>
+            </div>
             <% end %>
             
             <% if q[:code] && !q[:code].empty? %>
@@ -96,28 +167,53 @@ TEMPLATE = <<~HTML
 
             <p><%= q[:question] %></p>
 
-            <ul class="options">
-                <li><strong>A:</strong> <%= q[:choice_a] %></li>
-                <li><strong>B:</strong> <%= q[:choice_b] %></li>
+            <div class="options">
+                <button class="option-btn" onclick="checkAnswer(<%= i %>, 'A')">A: <%= q[:choice_a] %></button>
+                <button class="option-btn" onclick="checkAnswer(<%= i %>, 'B')">B: <%= q[:choice_b] %></button>
                 <% if q[:choice_c] && !q[:choice_c].empty? %>
-                <li><strong>C:</strong> <%= q[:choice_c] %></li>
+                <button class="option-btn" onclick="checkAnswer(<%= i %>, 'C')">C: <%= q[:choice_c] %></button>
                 <% end %>
-            </ul>
-
-            <button class="toggle-btn" onclick="document.getElementById('ans-<%= i %>').style.display = 'block'">答えを見る</button>
+            </div>
 
             <div id="ans-<%= i %>" class="answer-section">
-                <p><strong>正解: <%= q[:answer] %></strong></p>
-                <hr>
-                <p><%= q[:explanation].to_s.gsub(/\\n/, "<br>") %></p>
+                <div class="answer-label">正解: <%= q[:answer] %></div>
+                <hr style="border-top: 1px solid #b6d4fe; margin: 10px 0;">
+                <div style="color: #333;">
+                    <%= q[:explanation].to_s.gsub(/\\n/, "<br>") %>
+                </div>
             </div>
         </div>
         <% end %>
     </main>
 
-    <footer>
-        <p>Generated by Gemini CLI for Polished Ruby Programming</p>
-    </footer>
+    <script>
+        function checkAnswer(questionIndex, selectedOption) {
+            const card = document.getElementById('q-' + questionIndex);
+            const correctAnswer = card.getAttribute('data-answer');
+            const answerSection = document.getElementById('ans-' + questionIndex);
+            const buttons = card.querySelectorAll('.option-btn');
+
+            // Disable all buttons to prevent multiple guesses (optional)
+            buttons.forEach(btn => {
+                btn.disabled = true;
+                const optionText = btn.textContent;
+                // Check if this button corresponds to A, B, or C
+                const optionChar = optionText.trim().charAt(0);
+                
+                if (optionChar === correctAnswer) {
+                    btn.classList.add('correct');
+                    // Add checkmark
+                    btn.innerHTML += ' ✅';
+                } else if (optionChar === selectedOption && selectedOption !== correctAnswer) {
+                    btn.classList.add('incorrect');
+                    btn.innerHTML += ' ❌';
+                }
+            });
+
+            // Show explanation
+            answerSection.style.display = 'block';
+        }
+    </script>
 </body>
 </html>
 HTML
@@ -129,20 +225,77 @@ INDEX_TEMPLATE = <<~HTML
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Polished Ruby Programming Quizzes</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 40px 0;
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        h1 { margin: 0; font-size: 2.5em; }
+        .card-list {
+            list-style: none;
+            padding: 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 1px solid #e0e0e0;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .card a {
+            display: block;
+            padding: 20px;
+            text-decoration: none;
+            color: #2c3e50;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+        .chapter-title {
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 10px;
+            margin-top: 40px;
+            color: #555;
+        }
+    </style>
 </head>
 <body>
     <header>
-        <h1>💎 Polished Ruby Programming Quizzes</h1>
-        <p>研鑽Rubyプログラミング 学習記録・復習用クイズ集</p>
+        <h1>💎 Polished Ruby Programming</h1>
+        <p>Interactive Quiz Collection</p>
     </header>
 
     <main>
-        <h2>Chapter 1: 組み込みクラスを最大限に活用する</h2>
-        <ul>
+        <h2 class="chapter-title">Chapter 1: 組み込みクラスを最大限に活用する</h2>
+        <ul class="card-list">
             <% quiz_files.each do |quiz| %>
-            <li>
-                <a href="quizzes/<%= quiz[:filename] %>"><%= quiz[:title] %></a>
+            <li class="card">
+                <a href="quizzes/<%= quiz[:filename] %>">
+                    <%= quiz[:title] %>
+                    <div style="font-weight: normal; font-size: 0.9em; color: #7f8c8d; margin-top: 5px;">
+                        Click to start quiz →
+                    </div>
+                </a>
             </li>
             <% end %>
         </ul>
@@ -167,10 +320,7 @@ Dir.glob("problems/ch*/*.rb").sort.each do |file_path|
   if extractor && !extractor.questions.empty?
     filename = File.basename(file_path, ".rb") + ".html"
     
-    # テンプレートに変数を渡す際に result_with_hash を使う
     erb = ERB.new(TEMPLATE)
-    # Ruby 2.6系だと result_with_hash が使えない場合があるため、明示的にハッシュをバインディングする工夫
-    # ここでは安全のために変数展開済みのコンテキストを作成する
     html = erb.result_with_hash(title: extractor.title, questions: extractor.questions)
     
     File.write(File.join(quizzes_dir, filename), html)
